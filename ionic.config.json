@@ -1,0 +1,7 @@
+{
+  "name": "warehouse-app-redux",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}

@@ -1,5 +1,5 @@
+import { yupResolver } from '@hookform/resolvers/yup'
 import {
-  IonAlert,
   IonButton,
   IonCol,
   IonContent,
@@ -11,42 +11,59 @@ import {
   IonLabel,
   IonPage,
   IonRow,
+  IonText,
   IonTitle,
-  IonToolbar,
+  IonToolbar
 } from '@ionic/react'
 import { personCircle } from 'ionicons/icons'
 import { isEmpty } from 'lodash'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
+import * as yup from 'yup'
+import useNotify from '../libs/notify'
 import { RootState } from '../reducers/rootReducer'
 import { login } from '../reducers/userSlice'
 import { AppDispatch } from '../store'
 
+let schema = yup.object().shape({
+  username: yup.string().required('Please enter a valid username'),
+  password: yup.string().required('Please enter a valid password'),
+})
+
+type FormValues = {
+  username: string
+  password: string
+}
+
 const LoginView: React.FC = () => {
-  const user = useSelector((state: RootState) => state.auth.user)
+  const auth = useSelector((state: RootState) => state.auth)
+  const { user } = auth
+  const notify = useNotify()
   const history = useHistory()
   const dispatch: AppDispatch = useDispatch()
-  const [username, setUsername] = useState<string>('')
-  const [password, setPassword] = useState<string>('')
-  const [iserror, setIserror] = useState<boolean>(false)
-  const [message, setMessage] = useState<string>('')
 
-  const handleLogin = async () => {
-    if (!username) {
-      setMessage('Please enter a valid username')
-      setIserror(true)
-      return
-    }
+  const { register, handleSubmit, errors } = useForm<FormValues>({
+    defaultValues: {
+      username: '',
+      password: '',
+    },
+    resolver: yupResolver(schema),
+  })
 
-    if (!password) {
-      setMessage('Please enter your password')
-      setIserror(true)
-      return
-    }
-
+  const handleLogin: SubmitHandler<FormValues> = async ({
+    username,
+    password,
+  }) => {
     const action = login({ username, password })
-    await dispatch(action)
+    await dispatch(action).then((action) => {
+      if (action.type.match(/rejected/)) {
+        notify.errorFromServer(action.payload)
+      } else {
+        notify.success('Đăng nhập thành công')
+      }
+    })
   }
   useEffect(() => {
     checkLogin()
@@ -58,68 +75,68 @@ const LoginView: React.FC = () => {
   }
 
   return (
-    <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Login</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent fullscreen className="ion-padding ion-text-center">
-        <IonGrid>
-          <IonRow>
-            <IonCol>
-              <IonAlert
-                isOpen={iserror}
-                onDidDismiss={() => setIserror(false)}
-                cssClass="my-custom-class"
-                header={'Error!'}
-                message={message}
-                buttons={['Dismiss']}
-              />
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonIcon
-                style={{ fontSize: '70px', color: '#0040ff' }}
-                icon={personCircle}
-              />
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonItem>
-                <IonLabel position="floating">Username</IonLabel>
-                <IonInput
-                  type="text"
-                  value={username}
-                  onIonChange={(e) => setUsername(e.detail.value!)}
-                ></IonInput>
-              </IonItem>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonItem>
-                <IonLabel position="floating"> Password</IonLabel>
-                <IonInput
-                  type="password"
-                  value={password}
-                  onIonChange={(e) => setPassword(e.detail.value!)}
-                ></IonInput>
-              </IonItem>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonButton expand="block" onClick={handleLogin}>
-                Login
-              </IonButton>
-            </IonCol>
-          </IonRow>
-        </IonGrid>
-      </IonContent>
-    </IonPage>
+    <form onSubmit={handleSubmit(handleLogin)}>
+      <IonPage>
+        <IonHeader>
+          <IonToolbar>
+            <IonTitle>Login</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent fullscreen className="ion-padding ion-text-center">
+          <IonGrid>
+            <IonRow>
+              <IonCol>
+                <IonIcon
+                  style={{ fontSize: '70px', color: '#0040ff' }}
+                  icon={personCircle}
+                />
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonItem>
+                  <IonLabel position="floating">Username</IonLabel>
+                  <IonInput
+                    type="text"
+                    name="username"
+                    ref={register}
+                  ></IonInput>
+                  {errors && errors['username'] && (
+                    <IonText color="danger" className="ion-padding-start">
+                      <small>{errors['username'].message}</small>
+                    </IonText>
+                  )}
+                </IonItem>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonItem>
+                  <IonLabel position="floating"> Password</IonLabel>
+                  <IonInput
+                    type="password"
+                    name="password"
+                    ref={register}
+                  ></IonInput>
+                  {errors && errors['password'] && (
+                    <IonText color="danger" className="ion-padding-start">
+                      <small>{errors['password'].message}</small>
+                    </IonText>
+                  )}
+                </IonItem>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonButton expand="block" type="submit">
+                  Login
+                </IonButton>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+        </IonContent>
+      </IonPage>
+    </form>
   )
 }
 

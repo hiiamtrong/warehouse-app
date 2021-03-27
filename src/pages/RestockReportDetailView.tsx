@@ -9,9 +9,8 @@ import {
   IonPage,
   IonRow,
   IonTitle,
-  IonToolbar,
+  IonToolbar
 } from '@ionic/react'
-import { unwrapResult } from '@reduxjs/toolkit'
 import { get, map } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -47,9 +46,7 @@ const RestockReportDetailView: React.FC<RestockReportDetailPageProps> = ({
       const restockReportId = get(match, 'params.restockReportId')
       if (restockReportId) {
         const action = fetchById(restockReportId)
-        const result = await dispatch(action)
-        const restockReport = unwrapResult(result)
-        console.log(restockReport)
+        await dispatch(action)
       }
     }
 

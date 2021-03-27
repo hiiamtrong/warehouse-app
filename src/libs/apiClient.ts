@@ -10,14 +10,14 @@ axiosClient.interceptors.request.use((config: AxiosRequestConfig) => {
     return config
 }, (error) => {
 
-    return Promise.reject(error);
+    return Promise.reject(error.response);
 })
 
 
 axiosClient.interceptors.response.use((response: AxiosResponse) => {
     return response.data
 }, (error) => {
-    return Promise.reject(error);
+    return Promise.reject(error.response);
 });
 
 export default axiosClient

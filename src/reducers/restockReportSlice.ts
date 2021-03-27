@@ -7,7 +7,6 @@ export const fetchById = createAsyncThunk(
     '/restock-reports/:restockReportId',
     async (restockReportId: string) => {
         const response = await RestockReportAPI.fetchById(restockReportId)
-        console.log(response)
         return response
     }
 )

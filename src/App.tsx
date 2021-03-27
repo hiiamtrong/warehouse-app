@@ -1,4 +1,5 @@
-import { IonApp, IonRouterOutlet, IonSplitPane } from '@ionic/react'
+import { ToastProvider } from '@agney/ir-toast'
+import { IonApp, IonRouterOutlet } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css'
@@ -14,8 +15,6 @@ import '@ionic/react/css/text-alignment.css'
 import '@ionic/react/css/text-transformation.css'
 import '@ionic/react/css/typography.css'
 import { Redirect, Route } from 'react-router-dom'
-import { ToastContainer } from 'react-toastify'
-import Menu from './components/Menu'
 import PrivateRoute from './components/PrivateRoute'
 import ItemDetailView from './pages/ItemDetailView'
 import LoginView from './pages/LoginView'
@@ -28,29 +27,30 @@ const App: React.FC = () => {
   return (
     <div>
       <IonApp>
-        <IonReactRouter>
-          <IonRouterOutlet>
-            <Route path="/login" exact component={LoginView} />
-            <Redirect exact from="/" to="/restock-reports" />
-            <PrivateRoute
-              path="/restock-reports"
-              exact
-              component={RestockReportsView}
-            />
-            <PrivateRoute
-              path="/restock-reports/:restockReportId"
-              exact
-              component={RestockReportDetailView}
-            />
-            <PrivateRoute
-              path="/restock-reports/:restockReportId/view/:productId"
-              component={ItemDetailView}
-              exact={true}
-            />
-          </IonRouterOutlet>
-        </IonReactRouter>
+        <ToastProvider>
+          <IonReactRouter>
+            <IonRouterOutlet>
+              <Route path="/login" exact component={LoginView} />
+              <Redirect exact from="/" to="/restock-reports" />
+              <PrivateRoute
+                path="/restock-reports"
+                exact
+                component={RestockReportsView}
+              />
+              <PrivateRoute
+                path="/restock-reports/:restockReportId"
+                exact
+                component={RestockReportDetailView}
+              />
+              <PrivateRoute
+                path="/restock-reports/:restockReportId/view/:productId"
+                component={ItemDetailView}
+                exact={true}
+              />
+            </IonRouterOutlet>
+          </IonReactRouter>
+        </ToastProvider>
       </IonApp>
-      <ToastContainer />
     </div>
   )
 }

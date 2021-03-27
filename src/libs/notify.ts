@@ -1,68 +1,68 @@
-import { get } from 'lodash'
-import { toast } from 'react-toastify'
+import { useToast } from '@agney/ir-toast';
+import { get } from 'lodash';
 
-const notify = {
-    errorFromServer: function (error: any) {
-        console.log(error)
+
+function useNotify() {
+    const Toast = useToast()
+    const errorFromServer = function (error: any) {
         let message =
             get(error, 'response.data.error.message') ||
             get(error, 'data.error.message') ||
+            get(error, 'data.message') ||
             get(error, 'error.message') ||
             get(error, 'message') ||
             error
-        return toast.error(`⛔ ${message}`, {
-            position: 'top-right',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
+        const toast = Toast.create({
+            message,
+            color: 'danger',
+            position: 'top',
+            buttons: ['dismiss'],
+            animated: true,
+            duration: 1000
         })
-    },
-    errorMessage: function (message: string) {
-        return toast.error(`⛔ ${message}`, {
-            position: 'top-right',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
+        return toast.present()
+    }
+
+    const error = function (errorMessage: string) {
+
+        const toast = Toast.create({
+            message: errorMessage,
+            color: 'danger',
+            position: 'top',
+            buttons: ['dismiss'],
+            animated: true,
+            duration: 1000
         })
-    },
-    success: function (message: string) {
-        return toast.success(`✔️ ${message}`, {
-            position: 'top-right',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
+        return toast.present()
+    }
+
+    const success = function (message: string) {
+
+        const toast = Toast.create({
+            message,
+            color: 'success',
+            position: 'top',
+            buttons: ['dismiss'],
+            animated: true,
+            duration: 1000
         })
-    },
-    info: function (message: string) {
-        toast.info(`ℹ️ ${message}`, {
-            position: 'top-right',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
+        return toast.present()
+    }
+
+    const info = function (message: string) {
+
+        const toast = Toast.create({
+            message,
+            color: 'primary',
+            position: 'top',
+            buttons: ['dismiss'],
+            animated: true,
+            duration: 1000
         })
-    },
-    warn: function (message: string) {
-        return toast.warn(`⚠️ ${message}`, {
-            position: 'top-right',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        })
-    },
+        return toast.present()
+    }
+
+    return { error, success, errorFromServer, info }
 }
-export default notify
+
+export default useNotify;

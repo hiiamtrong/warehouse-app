@@ -13,7 +13,7 @@ import '@ionic/react/css/structure.css'
 import '@ionic/react/css/text-alignment.css'
 import '@ionic/react/css/text-transformation.css'
 import '@ionic/react/css/typography.css'
-import { Route } from 'react-router-dom'
+import { Redirect, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import Menu from './components/Menu'
 import PrivateRoute from './components/PrivateRoute'
@@ -31,6 +31,7 @@ const App: React.FC = () => {
         <IonReactRouter>
           <IonRouterOutlet>
             <Route path="/login" exact component={LoginView} />
+            <Redirect exact from="/" to="/restock-reports" />
             <PrivateRoute
               path="/restock-reports"
               exact

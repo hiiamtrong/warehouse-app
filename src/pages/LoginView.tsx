@@ -16,12 +16,14 @@ import {
   IonToolbar,
 } from '@ionic/react'
 import { personCircle } from 'ionicons/icons'
-import { isEmpty } from 'lodash'
 import React, { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import * as yup from 'yup'
+import withLoading from '../components/Loading'
+import { REDUX_STATUS } from '../constants'
+import useAuthenticaion from '../hook/useAuthenticaion'
 import useNotify from '../libs/notify'
 import { RootState } from '../reducers/rootReducer'
 import { login } from '../reducers/userSlice'
@@ -38,13 +40,16 @@ type FormValues = {
 }
 
 const LoginView: React.FC = () => {
-  const auth = useSelector((state: RootState) => state.auth)
-  const { user } = auth
+  const isAuthentication = useAuthenticaion()
+  const { waiting, error, status } = useSelector(
+    (state: RootState) => state.auth
+  )
   const notify = useNotify()
   const history = useHistory()
+
   const dispatch: AppDispatch = useDispatch()
 
-  const { register, handleSubmit, errors } = useForm<FormValues>({
+  const method = useForm<FormValues>({
     defaultValues: {
       username: '',
       password: '',
@@ -57,23 +62,32 @@ const LoginView: React.FC = () => {
     password,
   }) => {
     const action = login({ username, password })
-    await dispatch(action)
-      .then(() => {
+    await dispatch(action).then((action) => {
+      if (action.type.match(REDUX_STATUS.SUCCESS)) {
         notify.success('Đăng nhập thành công')
-      })
-      .catch((err) => {
-        notify.errorFromServer(err)
-      })
+      } else if (action.type.match(REDUX_STATUS.FAIL)) {
+        notify.errorFromServer(action.payload)
+      }
+    })
   }
   useEffect(() => {
     checkLogin()
-  }, [user])
+  }, [isAuthentication])
+
   function checkLogin() {
-    if (!isEmpty(user)) {
+    if (isAuthentication) {
       history.push('/restock-reports')
     }
   }
+  return withLoading(LoginViewLoading)({ waiting, method, handleLogin })
+}
 
+type FormProps = {
+  method: any
+  handleLogin: any
+}
+const LoginViewLoading: React.FC<FormProps> = ({ method, handleLogin }) => {
+  const { register, handleSubmit, errors } = method
   return (
     <form onSubmit={handleSubmit(handleLogin)}>
       <IonPage>

@@ -7,13 +7,14 @@ import {
     PURGE,
     REGISTER, REHYDRATE
 } from 'redux-persist';
+import { fetchById } from './reducers/restockReportSlice';
 import rootReducer from './reducers/rootReducer';
 import { login } from './reducers/userSlice';
 const store = configureStore({
     reducer: rootReducer,
     middleware: getDefaultMiddleware({
         serializableCheck: {
-            ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER, login.rejected.toString(), login.fulfilled.toString(), login.pending.toString()],
+            ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER, login.rejected.toString(), login.fulfilled.toString(), login.pending.toString(), fetchById.fulfilled.toString(), fetchById.rejected.toString(), fetchById.pending.toString()],
         },
     }),
 })

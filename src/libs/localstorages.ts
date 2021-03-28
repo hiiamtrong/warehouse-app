@@ -10,7 +10,10 @@ const LocalStorage = {
         return user ? JSON.parse(user) : {}
     },
     setUser: (user: User) => {
-        localStorage.setItem('user', JSON.stringify(user))
+        if (user) {
+            localStorage.setItem('user', JSON.stringify(user))
+        }
+
     },
 
     getRestockReport: () => {
@@ -18,7 +21,10 @@ const LocalStorage = {
         return restockReport ? JSON.parse(restockReport) : {}
     },
     setRestockReport: (restockReport: RestockReport) => {
-        localStorage.setItem('restockReport', JSON.stringify(restockReport))
+        if (restockReport) {
+            localStorage.setItem('restockReport', JSON.stringify(restockReport))
+        }
+
     },
 
     getItem: () => {
@@ -26,12 +32,18 @@ const LocalStorage = {
         return item ? JSON.parse(item) : {}
     },
     setItem: (item: Item) => {
-        localStorage.setItem('item', JSON.stringify(item))
+        if (item) {
+            localStorage.setItem('item', JSON.stringify(item))
+        }
+
     },
 
     getExpired: () => localStorage.getItem('expired'),
     setExpired: (expired: string) => {
-        localStorage.setItem('expired', expired)
+        if (expired) {
+            localStorage.setItem('expired', expired)
+        }
+
     }
 }
 

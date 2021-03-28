@@ -1,26 +1,25 @@
-import React, { useContext, useEffect } from 'react'
-
-import { get, find, isEmpty } from 'lodash'
 import {
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonImg,
+  IonPage,
+  IonRow,
   IonTitle,
   IonToolbar,
-  IonHeader,
-  IonPage,
-  IonContent,
-  IonImg,
-  IonCard,
-  IonCardTitle,
-  IonCardHeader,
-  IonCol,
-  IonRow,
 } from '@ionic/react'
-
-import { RouteComponentProps } from 'react-router-dom'
-import RestockReport from '../models/restock-report'
+import { find, get, isEmpty } from 'lodash'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '../reducers/rootReducer'
+import { RouteComponentProps } from 'react-router-dom'
+import withLoading from '../components/Loading'
+import useNotify from '../libs/notify'
+import RestockReport from '../models/restock-report'
 import { fetchById, setItem } from '../reducers/restockReportSlice'
-import { unwrapResult } from '@reduxjs/toolkit'
+import { RootState } from '../reducers/rootReducer'
 import { AppDispatch } from '../store'
 
 interface ItemDetailPageProps
@@ -29,19 +28,21 @@ interface ItemDetailPageProps
   }> {}
 
 const ItemDetailView: React.FC<ItemDetailPageProps> = ({ match }) => {
-  const { restockReport, item } = useSelector(
+  const { restockReport, item, waiting } = useSelector(
     (state: RootState) => state.restockReport
   )
   const dispatch: AppDispatch = useDispatch()
+  const notify = useNotify()
   useEffect(() => {
     const productId = get(match, 'params.productId')
     const restockReportId = get(match, 'params.restockReportId')
     async function getRestockReportDetail() {
       if (restockReportId) {
-        if (isEmpty(restockReport) || restockReport._id !== restockReportId) {
+        if (isEmpty(restockReport) || restockReport?._id !== restockReportId) {
           const action = fetchById(restockReportId)
-          const result = await dispatch(action)
-          const restockReport = unwrapResult(result)
+          await dispatch(action).catch((err) => {
+            notify.errorFromServer(err)
+          })
           getProductDetail({ restockReport, productId })
         } else {
           getProductDetail({ restockReport, productId })
@@ -68,6 +69,13 @@ const ItemDetailView: React.FC<ItemDetailPageProps> = ({ match }) => {
     getRestockReportDetail()
   }, [match])
 
+  return withLoading(ItemDetailViewLoading)({ waiting, item })
+}
+
+type ItemProps = {
+  item: any
+}
+const ItemDetailViewLoading: React.FC<ItemProps> = ({ item }) => {
   return (
     <IonPage>
       <IonHeader>

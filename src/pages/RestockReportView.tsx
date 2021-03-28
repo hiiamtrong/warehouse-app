@@ -17,6 +17,7 @@ import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import RestockReportAPI from '../api/restockReportAPI'
 import Loading from '../components/Loading'
+import useNotify from '../libs/notify'
 import RestockReport from '../models/restock-report'
 
 const RestockReportsView: React.FC = () => {
@@ -27,9 +28,13 @@ const RestockReportsView: React.FC = () => {
   }
 
   const [waiting, setWaiting] = useState(true)
+  const notify = useNotify()
+
   useEffect(() => {
     async function getRestockReports() {
-      const restockReports = await RestockReportAPI.getAll()
+      const restockReports = await RestockReportAPI.getAll().catch((err) => {
+        notify.errorFromServer(err)
+      })
       setRestockReports(restockReports)
     }
     getRestockReports().finally(() => {

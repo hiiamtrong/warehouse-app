@@ -20,6 +20,7 @@
     "@types/react-router-dom": "^5.1.7",
     "axios": "^0.21.1",
     "core-js": "^3.9.1",
+    "history": "^4.10.1",
     "ionicons": "^5.4.0",
     "lodash": "^4.17.21",
     "react": "^17.0.1",

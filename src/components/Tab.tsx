@@ -66,11 +66,6 @@ export const TabMenu: React.FC = () => {
           <IonIcon icon={pricetag} />
           <IonLabel>Item detail</IonLabel>
         </IonTabButton>
-
-        <IonTabButton tab="staff">
-          <IonIcon icon={personCircle} />
-          <IonLabel>Staff</IonLabel>
-        </IonTabButton>
       </IonTabBar>
     </IonTabs>
   )

@@ -1,8 +1,6 @@
-import { isEmpty } from 'lodash'
 import React from 'react'
-import { useSelector } from 'react-redux'
 import { Redirect, Route } from 'react-router'
-import { RootState } from '../reducers/rootReducer'
+import useAuthenticaion from '../hook/useAuthenticaion'
 
 type PrivateRouteProps = {
   component: any
@@ -11,8 +9,8 @@ type PrivateRouteProps = {
 }
 
 function PrivateRoute({ component, ...props }: PrivateRouteProps) {
-  const user = useSelector((state: RootState) => state.auth.user)
-  if (!isEmpty(user)) {
+  const isAuthentication = useAuthenticaion()
+  if (isAuthentication) {
     return <Route {...props} component={component} />
   }
   return <Redirect to="/login" />

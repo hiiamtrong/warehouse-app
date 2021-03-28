@@ -13,10 +13,12 @@ const withLoading = <P extends object>(Component: React.ComponentType<P>) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          flexDirection: 'column',
           height: '100%',
         }}
       >
         <ClipLoader size={64} />
+        <p>Đang tải...</p>
       </div>
     ) : (
       <Component {...(props as P)} />

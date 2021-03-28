@@ -9,13 +9,14 @@ import {
   IonPage,
   IonRow,
   IonTitle,
-  IonToolbar
+  IonToolbar,
 } from '@ionic/react'
 import { get, map } from 'lodash'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
 import Loading from '../components/Loading'
+import useNotify from '../libs/notify'
 import { fetchById } from '../reducers/restockReportSlice'
 import { RootState } from '../reducers/rootReducer'
 import { AppDispatch } from '../store'
@@ -29,30 +30,30 @@ const RestockReportDetailView: React.FC<RestockReportDetailPageProps> = ({
   match,
 }) => {
   const history = useHistory()
-  const [waiting, setWaiting] = useState(true)
-  const restockReport = useSelector(
-    (state: RootState) => state.restockReport.restockReport
+  const { restockReport, waiting } = useSelector(
+    (state: RootState) => state.restockReport
   )
   const dispatch: AppDispatch = useDispatch()
-
+  const notify = useNotify()
   function viewProductDetail(productId: String) {
     const restockReportId = restockReport._id
     history.push('/restock-reports/' + restockReportId + '/view/' + productId, {
       direction: 'none',
     })
   }
+
   useEffect(() => {
     async function getRestockReportDetail() {
       const restockReportId = get(match, 'params.restockReportId')
-      if (restockReportId) {
+      if (restockReportId && restockReport._id !== restockReportId) {
         const action = fetchById(restockReportId)
-        await dispatch(action)
+        await dispatch(action).catch((err) => {
+          notify.errorFromServer(err)
+        })
       }
     }
 
-    getRestockReportDetail().finally(() => {
-      setWaiting(false)
-    })
+    getRestockReportDetail()
   }, [match])
 
   return Loading(RestockReportDetailViewLoading)({

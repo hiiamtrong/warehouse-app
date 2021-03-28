@@ -13,7 +13,7 @@ import {
   IonRow,
   IonText,
   IonTitle,
-  IonToolbar
+  IonToolbar,
 } from '@ionic/react'
 import { personCircle } from 'ionicons/icons'
 import { isEmpty } from 'lodash'
@@ -57,13 +57,13 @@ const LoginView: React.FC = () => {
     password,
   }) => {
     const action = login({ username, password })
-    await dispatch(action).then((action) => {
-      if (action.type.match(/rejected/)) {
-        notify.errorFromServer(action.payload)
-      } else {
+    await dispatch(action)
+      .then(() => {
         notify.success('Đăng nhập thành công')
-      }
-    })
+      })
+      .catch((err) => {
+        notify.errorFromServer(err)
+      })
   }
   useEffect(() => {
     checkLogin()

@@ -29,11 +29,10 @@ interface ItemDetailPageProps
   }> {}
 
 const ItemDetailView: React.FC<ItemDetailPageProps> = ({ match }) => {
-  const restockReportState = useSelector(
+  const { restockReport, item } = useSelector(
     (state: RootState) => state.restockReport
   )
   const dispatch: AppDispatch = useDispatch()
-  const { restockReport, item } = restockReportState
   useEffect(() => {
     const productId = get(match, 'params.productId')
     const restockReportId = get(match, 'params.restockReportId')
@@ -60,8 +59,10 @@ const ItemDetailView: React.FC<ItemDetailPageProps> = ({ match }) => {
       const newItem = find(get(restockReport, 'items', []), (item) => {
         return item.product._id === productId
       })
-      const action = setItem(newItem)
-      dispatch(action)
+      if (newItem) {
+        const action = setItem(newItem)
+        dispatch(action)
+      }
     }
 
     getRestockReportDetail()

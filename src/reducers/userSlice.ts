@@ -25,7 +25,6 @@ export const userSlice = createSlice({
     name: 'auth',
     initialState: {
         user: LocalStorage.getUser() || {},
-        error: null
     },
     reducers: {
     },
@@ -35,7 +34,7 @@ export const userSlice = createSlice({
 
         },
         [login.rejected.toString()]: (state, action) => {
-            state.error = action.payload
+            throw action.payload
         }
     },
 

@@ -1,5 +1,4 @@
 import {
-  IonButton,
   IonIcon,
   IonLabel,
   IonRouterOutlet,
@@ -7,7 +6,7 @@ import {
   IonTabButton,
   IonTabs,
 } from '@ionic/react'
-import { pricetag, personCircle, reader, list } from 'ionicons/icons'
+import { list, pricetag, reader } from 'ionicons/icons'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { Redirect, Route } from 'react-router'
@@ -23,6 +22,7 @@ export const TabMenu: React.FC = () => {
     (state: RootState) => state.restockReport
   )
   const productId = item?.product?._id
+
   const restockReportId = restockReport?._id
   return (
     <IonTabs>
@@ -52,6 +52,7 @@ export const TabMenu: React.FC = () => {
         </IonTabButton>
 
         <IonTabButton
+          disabled={!restockReportId}
           tab="list-items"
           href={`/restock-reports/${restockReportId}`}
         >
@@ -60,6 +61,7 @@ export const TabMenu: React.FC = () => {
         </IonTabButton>
 
         <IonTabButton
+          disabled={!restockReportId || !productId}
           tab="item-detail"
           href={`/restock-reports/${restockReportId}/view/${productId}`}
         >

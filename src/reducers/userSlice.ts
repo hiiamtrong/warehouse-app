@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import AuthAPI from '../api/authAPI'
-import { REDUX_STATUS } from '../constants'
 import LocalStorage from '../libs/localstorages'
 
 

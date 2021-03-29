@@ -10,17 +10,19 @@ import { list, pricetag, reader } from 'ionicons/icons'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { Redirect, Route } from 'react-router'
-import ItemDetailView from '../pages/ItemDetailView'
+import ItemDetailView from '../pages/ItemDetail'
 import LoginView from '../pages/LoginView'
-import RestockReportDetailView from '../pages/RestockReportDetailView'
+import RestockReportDetailView from '../pages/RestockReportDetail'
 import RestockReportsView from '../pages/RestockReportView'
 import { RootState } from '../reducers/rootReducer'
 import PrivateRoute from './PrivateRoute'
 
 export const TabMenu: React.FC = () => {
-  const { item, restockReport } = useSelector(
+  const { restockReport } = useSelector(
     (state: RootState) => state.restockReport
   )
+  const { item } = useSelector((state: RootState) => state.item)
+
   const productId = item?.product?._id
 
   const restockReportId = restockReport?._id

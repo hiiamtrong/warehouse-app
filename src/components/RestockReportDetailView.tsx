@@ -18,62 +18,13 @@ import {
 } from '@ionic/react'
 import { filterCircle } from 'ionicons/icons'
 import { filter, get, map } from 'lodash'
-import React, { useEffect, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { RouteComponentProps, useHistory } from 'react-router-dom'
-import Loading from '../components/Loading'
-import useNotify from '../libs/notify'
-import { fetchById } from '../reducers/restockReportSlice'
-import { RootState } from '../reducers/rootReducer'
-import { AppDispatch } from '../store'
+import React, { useMemo, useState } from 'react'
 
-interface RestockReportDetailPageProps
-  extends RouteComponentProps<{
-    id: string
-  }> {}
-
-const RestockReportDetailView: React.FC<RestockReportDetailPageProps> = ({
-  match,
-}) => {
-  const history = useHistory()
-  const { restockReport, waiting } = useSelector(
-    (state: RootState) => state.restockReport
-  )
-  const dispatch: AppDispatch = useDispatch()
-
-  const notify = useNotify()
-  function viewProductDetail(productId: String) {
-    const restockReportId = restockReport._id
-    history.push('/restock-reports/' + restockReportId + '/view/' + productId, {
-      direction: 'none',
-    })
-  }
-
-  useEffect(() => {
-    async function getRestockReportDetail() {
-      const restockReportId = get(match, 'params.restockReportId')
-      if (restockReportId && restockReport._id !== restockReportId) {
-        const action = fetchById(restockReportId)
-        await dispatch(action).catch((err) => {
-          notify.errorFromServer(err)
-        })
-      }
-    }
-
-    getRestockReportDetail()
-  }, [match])
-
-  return Loading(RestockReportDetailViewLoading)({
-    waiting,
-    restockReport,
-    viewProductDetail,
-  })
-}
 type RestockReportProps = {
   restockReport: any
   viewProductDetail: any
 }
-const RestockReportDetailViewLoading: React.FC<RestockReportProps> = ({
+const RestockReportDetailView: React.FC<RestockReportProps> = ({
   restockReport,
   viewProductDetail,
 }) => {

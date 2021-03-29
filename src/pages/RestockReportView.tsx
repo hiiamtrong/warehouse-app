@@ -53,7 +53,7 @@ type RestockReportsProps = {
   restockReports: any
   goToRestockReport: any
 }
-const RestockReportsViewLoading = React.memo(function ({
+const RestockReportsViewLoading = function ({
   restockReports,
   goToRestockReport,
 }: RestockReportsProps) {
@@ -97,6 +97,6 @@ const RestockReportsViewLoading = React.memo(function ({
       </IonContent>
     </IonPage>
   )
-})
+}
 
 export default RestockReportsView

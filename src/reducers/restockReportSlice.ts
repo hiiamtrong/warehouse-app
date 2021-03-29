@@ -36,14 +36,9 @@ export const restockReportSlice = createSlice({
     name: 'restockReport',
     initialState: {
         restockReport: LocalStorage.getRestockReport() || null,
-        item: LocalStorage.getItem() || null,
         waiting: false
     },
     reducers: {
-        setItem(state, action) {
-            state.item = action.payload
-            LocalStorage.setItem(action.payload)
-        }
     },
     extraReducers: {
         [fetchById.fulfilled.toString()]: (state, action) => {
@@ -74,6 +69,6 @@ export const restockReportSlice = createSlice({
 })
 
 
-export const { setItem } = restockReportSlice.actions
+export const { } = restockReportSlice.actions
 
 export default restockReportSlice.reducer

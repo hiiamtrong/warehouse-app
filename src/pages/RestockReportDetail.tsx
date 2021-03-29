@@ -24,17 +24,17 @@ const RestockReportDetail: React.FC<RestockReportDetailPageProps> = ({
   const dispatch: AppDispatch = useDispatch()
 
   const notify = useNotify()
+
   function viewProductDetail(productId: String) {
     const restockReportId = restockReport._id
     history.push('/restock-reports/' + restockReportId + '/view/' + productId, {
       direction: 'none',
     })
   }
-
   const restockReportId = get(match, 'params.restockReportId')
-
   useEffect(() => {
     async function getRestockReportDetail() {
+      console.log(restockReportId)
       if (restockReportId) {
         const action = fetchById(restockReportId)
         await dispatch(action).catch((err) => {
@@ -44,7 +44,7 @@ const RestockReportDetail: React.FC<RestockReportDetailPageProps> = ({
     }
 
     getRestockReportDetail()
-  }, [restockReportId])
+  }, [match])
 
   return Loading(RestockReportDetailView)({
     waiting,

@@ -1,10 +1,7 @@
-import { yupResolver } from '@hookform/resolvers/yup'
 import { find, findIndex, get, isEmpty } from 'lodash'
 import React, { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { RouteComponentProps } from 'react-router-dom'
-import * as yup from 'yup'
 import ItemDetailView from '../components/ItemDetailView'
 import withLoading from '../components/Loading'
 import useNotify from '../libs/notify'
@@ -14,6 +11,7 @@ import { setItem } from '../reducers/itemSlice'
 import { countMobile, fetchById } from '../reducers/restockReportSlice'
 import { RootState } from '../reducers/rootReducer'
 import { AppDispatch } from '../store'
+
 interface ItemDetailPageProps
   extends RouteComponentProps<{
     id: string
@@ -23,9 +21,7 @@ const ItemDetail: React.FC<ItemDetailPageProps> = ({ match }) => {
   const { restockReport, waiting } = useSelector(
     (state: RootState) => state.restockReport
   )
-
-  const { item } = useSelector((state: RootState) => state.item)
-
+  let { item } = useSelector((state: RootState) => state.item)
   const dispatch: AppDispatch = useDispatch()
   const notify = useNotify()
 
@@ -56,6 +52,7 @@ const ItemDetail: React.FC<ItemDetailPageProps> = ({ match }) => {
       const newItem = find(get(restockReport, 'items', []), (item) => {
         return item.product._id === productId
       })
+
       if (newItem) {
         const action = setItem(newItem)
         dispatch(action)
@@ -63,30 +60,7 @@ const ItemDetail: React.FC<ItemDetailPageProps> = ({ match }) => {
     }
 
     getRestockReportDetail()
-  }, [productId, restockReportId])
-
-  let schema = yup.object().shape({
-    quantity: yup
-      .number()
-      .max(
-        item.restockQuantity,
-        `Số lượng lấy tối đa là ${item.restockQuantity}`
-      )
-      .min(0, 'Số lượng tối thiểu là 0')
-      .required('Please enter quantity'),
-  })
-
-  type FormValues = {
-    quantity: number
-  }
-
-  const method = useForm<FormValues>({
-    defaultValues: {
-      quantity: 0,
-    },
-    resolver: yupResolver(schema),
-    mode: 'onSubmit',
-  })
+  }, [match])
 
   async function handleCountMobile({ quantity }: { quantity: number }) {
     const itemIndex = findIndex(restockReport.items, (item: Item) => {
@@ -98,7 +72,6 @@ const ItemDetail: React.FC<ItemDetailPageProps> = ({ match }) => {
 
   return withLoading(ItemDetailView)({
     waiting,
-    method,
     item,
     handleCountMobile,
   })

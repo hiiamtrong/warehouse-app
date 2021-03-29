@@ -1,3 +1,4 @@
+import { yupResolver } from '@hookform/resolvers/yup'
 import {
   IonButton,
   IonCard,
@@ -16,18 +17,36 @@ import {
 } from '@ionic/react'
 import { get } from 'lodash'
 import React from 'react'
+import { useForm } from 'react-hook-form'
+import * as yup from 'yup'
 
 type ItemProps = {
   item: any
-  method: any
   handleCountMobile: any
 }
+type FormValues = {
+  quantity: number
+}
+const ItemDetailView: React.FC<ItemProps> = ({ item, handleCountMobile }) => {
+  let schema = yup.object().shape({
+    quantity: yup
+      .number()
+      .max(
+        item.restockQuantity,
+        `Số lượng lấy tối đa là ${item.restockQuantity}`
+      )
+      .min(0, 'Số lượng tối thiểu là 0')
+      .required('Please enter quantity'),
+  })
 
-const ItemDetailView: React.FC<ItemProps> = ({
-  item,
-  method,
-  handleCountMobile,
-}) => {
+  const method = useForm<FormValues>({
+    defaultValues: {
+      quantity: 0,
+    },
+    resolver: yupResolver(schema),
+    mode: 'onSubmit',
+  })
+
   const { register, errors, handleSubmit } = method
   return (
     <IonPage>

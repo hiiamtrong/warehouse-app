@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { WORK_URL } from '../config/environments'
 import history from './history'
-import LocalStorage from './localstorages'
+import LocalStorage from './local-storages'
 
 export const axiosClient = axios.create({ baseURL: WORK_URL })
 

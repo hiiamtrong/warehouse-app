@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import AuthAPI from '../api/authAPI'
-import LocalStorage from '../libs/localstorages'
+import LocalStorage from '../libs/local-storages'
 
 
 

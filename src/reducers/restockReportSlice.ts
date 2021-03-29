@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import RestockReportAPI from '../api/restockReportAPI'
-import LocalStorage from '../libs/localstorages'
+import LocalStorage from '../libs/local-storages'
 
 
 export const fetchById = createAsyncThunk(

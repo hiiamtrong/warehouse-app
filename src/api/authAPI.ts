@@ -1,5 +1,5 @@
 
-import apiClient from '../libs/apiClient'
+import apiClient from '../libs/api-service'
 const AuthAPI = {
     login: async ({ username, password }: { username: string, password: string }) => {
         try {

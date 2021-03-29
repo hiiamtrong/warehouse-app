@@ -1,4 +1,4 @@
-import apiClient from '../libs/apiClient'
+import apiClient from '../libs/api-service'
 const RestockReportAPI = {
     getAll: async () => {
         const restockReports = await apiClient

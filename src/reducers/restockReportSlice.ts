@@ -17,6 +17,21 @@ export const fetchById = createAsyncThunk(
     }
 )
 
+export const countMobile = createAsyncThunk(
+    '/restock-reports/:restockReportId/count-mobile/:itemIndex',
+    async ({ restockReportId, itemIndex, quantity }: { restockReportId: string, itemIndex: number, quantity: number }, { rejectWithValue }) => {
+        try {
+            const response = await RestockReportAPI.countMobile(restockReportId, itemIndex, quantity)
+            LocalStorage.setRestockReport(response)
+            return response
+        } catch (error) {
+            return rejectWithValue(error)
+        }
+
+    }
+)
+
+
 export const restockReportSlice = createSlice({
     name: 'restockReport',
     initialState: {
@@ -41,7 +56,19 @@ export const restockReportSlice = createSlice({
         },
         [fetchById.pending.toString()]: (state) => {
             state.waiting = true
-        }
+        },
+
+        [countMobile.fulfilled.toString()]: (state, action) => {
+            state.restockReport = action.payload
+            state.waiting = false
+        },
+        [countMobile.rejected.toString()]: (state, action) => {
+            state.waiting = false
+            throw action.payload
+        },
+        [countMobile.pending.toString()]: (state) => {
+            state.waiting = true
+        },
     }
 
 })

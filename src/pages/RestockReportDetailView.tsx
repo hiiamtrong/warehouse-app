@@ -6,13 +6,19 @@ import {
   IonContent,
   IonGrid,
   IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
   IonPage,
   IonRow,
+  IonSelect,
+  IonSelectOption,
   IonTitle,
   IonToolbar,
 } from '@ionic/react'
-import { get, map } from 'lodash'
-import React, { useEffect } from 'react'
+import { filterCircle } from 'ionicons/icons'
+import { filter, get, map } from 'lodash'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
 import Loading from '../components/Loading'
@@ -34,6 +40,7 @@ const RestockReportDetailView: React.FC<RestockReportDetailPageProps> = ({
     (state: RootState) => state.restockReport
   )
   const dispatch: AppDispatch = useDispatch()
+
   const notify = useNotify()
   function viewProductDetail(productId: String) {
     const restockReportId = restockReport._id
@@ -70,20 +77,60 @@ const RestockReportDetailViewLoading: React.FC<RestockReportProps> = ({
   restockReport,
   viewProductDetail,
 }) => {
+  const [status, setStatus] = useState('all')
+  const filterRestockReportItems = filter(restockReport.items, (item) => {
+    if (status === 'all') {
+      return true
+    }
+    if (status === 'taken-enough') {
+      return item.takenQuantity === item.restockQuantity
+    }
+    if (status === 'taken-missing') {
+      return (
+        item.takenQuantity >= 0 && item.takenQuantity !== item.restockQuantity
+      )
+    }
+  })
+  const filterItems = useMemo(() => {
+    return filterRestockReportItems
+  }, [status])
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>
-            Restock Report {get(restockReport, 'restockReportId')}
-          </IonTitle>
+          <IonCol className="ion-text-left">
+            <IonTitle>
+              Restock Report {get(restockReport, 'restockReportId')}
+            </IonTitle>
+          </IonCol>
+          <IonItem>
+            <IonIcon icon={filterCircle}></IonIcon>
+            <IonLabel>Filter</IonLabel>
+            <IonSelect
+              value={status}
+              placeholder="Select One"
+              onIonChange={(e) => setStatus(e.detail.value)}
+            >
+              <IonSelectOption value="all">Tất cả</IonSelectOption>
+              <IonSelectOption value="taken-enough">Đã lấy đủ</IonSelectOption>
+              <IonSelectOption value="taken-missing">
+                Đã lấy thiếu
+              </IonSelectOption>
+            </IonSelect>
+          </IonItem>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding ion-text-center">
         <IonGrid>
-          {map(get(restockReport, 'items', []), (item) => {
+          {map(filterItems, (item) => {
             return (
               <IonCard
+                color={
+                  item.takenQuantity === item.restockQuantity
+                    ? 'success'
+                    : 'light'
+                }
                 key={item.sku}
                 onClick={() => viewProductDetail(get(item, 'product._id'))}
               >
@@ -106,6 +153,14 @@ const RestockReportDetailViewLoading: React.FC<RestockReportProps> = ({
                         {'Cần lấy'} {item.restockQuantity}
                       </IonCol>
                     </IonRow>
+                    {item.takenQuantity >= 0 && (
+                      <IonRow>
+                        <IonCol className="ion-text-left"></IonCol>
+                        <IonCol className="ion-text-right">
+                          {'Đã lấy'} {item.takenQuantity}
+                        </IonCol>
+                      </IonRow>
+                    )}
                   </IonCardTitle>
                 </IonCardHeader>
               </IonCard>

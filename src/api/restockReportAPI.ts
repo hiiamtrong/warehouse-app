@@ -9,6 +9,11 @@ const RestockReportAPI = {
         const restockReport = await apiClient
             .get('/api/restock-reports/' + restockReportId)
         return restockReport
+    },
+    countMobile: async (restockReportId: string, itemIndex: number, quantity: number) => {
+        const restockReport = await apiClient
+            .get(`/api/restock-reports/${restockReportId}/count-mobile/${itemIndex}`, { params: { quantity } })
+        return restockReport
     }
 }
 

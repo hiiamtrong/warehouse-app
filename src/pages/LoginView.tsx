@@ -41,9 +41,7 @@ type FormValues = {
 
 const LoginView: React.FC = () => {
   const isAuthentication = useAuthenticaion()
-  const { waiting, error, status } = useSelector(
-    (state: RootState) => state.auth
-  )
+  const { waiting } = useSelector((state: RootState) => state.auth)
   const notify = useNotify()
   const history = useHistory()
 

@@ -5,6 +5,7 @@ export interface Item {
     khoQuantity: number;
     restockQuantity: number;
     currentLocation: { code: string };
+    takenQuantity: number
 }
 
 export default Item;

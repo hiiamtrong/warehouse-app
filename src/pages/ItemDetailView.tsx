@@ -1,4 +1,6 @@
+import { yupResolver } from '@hookform/resolvers/yup'
 import {
+  IonButton,
   IonCard,
   IonCardHeader,
   IonCardTitle,
@@ -6,22 +8,26 @@ import {
   IonContent,
   IonHeader,
   IonImg,
+  IonInput,
   IonPage,
   IonRow,
+  IonText,
   IonTitle,
   IonToolbar,
 } from '@ionic/react'
-import { find, get, isEmpty } from 'lodash'
+import { find, findIndex, get, isEmpty } from 'lodash'
 import React, { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { RouteComponentProps } from 'react-router-dom'
+import * as yup from 'yup'
 import withLoading from '../components/Loading'
 import useNotify from '../libs/notify'
+import Item from '../models/item'
 import RestockReport from '../models/restock-report'
-import { fetchById, setItem } from '../reducers/restockReportSlice'
+import { countMobile, fetchById, setItem } from '../reducers/restockReportSlice'
 import { RootState } from '../reducers/rootReducer'
 import { AppDispatch } from '../store'
-
 interface ItemDetailPageProps
   extends RouteComponentProps<{
     id: string
@@ -69,13 +75,58 @@ const ItemDetailView: React.FC<ItemDetailPageProps> = ({ match }) => {
     getRestockReportDetail()
   }, [match])
 
-  return withLoading(ItemDetailViewLoading)({ waiting, item })
+  let schema = yup.object().shape({
+    quantity: yup
+      .number()
+      .max(
+        item.restockQuantity,
+        `Số lượng lấy tối đa là ${item.restockQuantity}`
+      )
+      .min(0, 'Số lượng tối thiểu là 0')
+      .required('Please enter quantity'),
+  })
+
+  type FormValues = {
+    quantity: number
+  }
+  const method = useForm<FormValues>({
+    defaultValues: {
+      quantity: 0,
+    },
+    reValidateMode: 'onChange',
+    resolver: yupResolver(schema),
+    mode: 'onSubmit',
+  })
+
+  async function handleCountMobile({ quantity }: { quantity: number }) {
+    const restockReportId = get(restockReport, '_id')
+    const productId = get(item, 'product._id')
+    const itemIndex = findIndex(restockReport.items, (item: Item) => {
+      return item.product._id === productId
+    })
+    const action = countMobile({ quantity, restockReportId, itemIndex })
+    await dispatch(action)
+  }
+
+  return withLoading(ItemDetailViewLoading)({
+    waiting,
+    method,
+    item,
+    handleCountMobile,
+  })
 }
 
 type ItemProps = {
   item: any
+  method: any
+  handleCountMobile: any
 }
-const ItemDetailViewLoading: React.FC<ItemProps> = ({ item }) => {
+const ItemDetailViewLoading: React.FC<ItemProps> = ({
+  item,
+  method,
+  handleCountMobile,
+}) => {
+  const { register, errors, handleSubmit } = method
   return (
     <IonPage>
       <IonHeader>
@@ -104,6 +155,29 @@ const ItemDetailViewLoading: React.FC<ItemProps> = ({ item }) => {
                   {'Cần lấy'} {get(item, 'restockQuantity', '')}
                 </IonCol>
               </IonRow>
+
+              <form onSubmit={handleSubmit(handleCountMobile)}>
+                <IonRow>
+                  <IonCol className="ion-text-left">
+                    <IonInput
+                      type="number"
+                      class="box"
+                      name="quantity"
+                      ref={register}
+                      value={item.takenQuantity}
+                      disabled={item.takenQuantity >= 0}
+                    />
+                  </IonCol>
+                  <IonCol className="ion-text-right">
+                    <IonButton type="submit">Điền</IonButton>
+                  </IonCol>
+                </IonRow>
+                {errors && errors['quantity'] && (
+                  <IonText color="danger" className="ion-padding-start">
+                    <small>{errors['quantity'].message}</small>
+                  </IonText>
+                )}
+              </form>
             </IonCardTitle>
           </IonCardHeader>
         </IonCard>

@@ -60,7 +60,7 @@ const ItemDetail: React.FC<ItemDetailPageProps> = ({ match }) => {
     }
 
     getRestockReportDetail()
-  }, [match])
+  }, [])
 
   async function handleCountMobile({ quantity }: { quantity: number }) {
     const itemIndex = findIndex(restockReport.items, (item: Item) => {

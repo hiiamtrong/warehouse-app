@@ -44,7 +44,7 @@ const RestockReportDetail: React.FC<RestockReportDetailPageProps> = ({
     }
 
     getRestockReportDetail()
-  }, [match])
+  }, [])
 
   return Loading(RestockReportDetailView)({
     waiting,

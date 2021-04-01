@@ -30,14 +30,14 @@ const RestockReportDetail = observer(() => {
         })
       }
     }
-
     getRestockReportDetail()
   }, [])
 
-  return Loading(RestockReportDetailView)({
-    waiting,
-    restockReport,
-    viewProductDetail,
-  })
+  return (
+    <RestockReportDetailView
+      restockReport={restockReport}
+      viewProductDetail={viewProductDetail}
+    />
+  )
 })
 export default RestockReportDetail

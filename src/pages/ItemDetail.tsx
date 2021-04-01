@@ -46,7 +46,7 @@ const ItemDetail = observer(() => {
         setItem(_item)
       }
     })()
-  }, [match])
+  }, [productId, restockReportId])
 
   async function handleCountMobile({ quantity }: { quantity: number }) {
     const itemIndex = findIndex(restockReport?.items, (item: Item) => {

@@ -24,7 +24,8 @@ export class RestockReportStore {
             restockReport: observable,
             waiting: observable,
             fetchById: action,
-            countMobile: action
+            countMobile: action,
+            setWaiting: action
         });
     }
 
@@ -37,29 +38,27 @@ export class RestockReportStore {
 
     fetchById = async (restockReportId: string) => {
         try {
-            this.waiting = true
             const response = await RestockReportAPI.fetchById(restockReportId)
             this.setRestockReport(response)
             return response
         } catch (error) {
             throw error
-        } finally {
-            this.waiting = false
         }
     }
 
     countMobile = async ({ restockReportId, itemIndex, quantity }: { restockReportId: string, itemIndex: number, quantity: number }) => {
         try {
-            this.waiting = true
+
             const response = await RestockReportAPI.countMobile(restockReportId, itemIndex, quantity)
             this.setRestockReport(response)
             return response
         } catch (error) {
             throw error
-        } finally {
-            this.waiting = false
         }
 
+    }
+    setWaiting = (status: boolean) => {
+        this.waiting = status
     }
 
 }

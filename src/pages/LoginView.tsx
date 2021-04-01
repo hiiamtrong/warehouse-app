@@ -22,9 +22,8 @@ import { useHistory } from 'react-router-dom'
 import * as yup from 'yup'
 import withLoading from '../components/Loading'
 import { AppContext } from '../context'
-import useAuthenticaion from '../hook/useAuthentication'
 import useNotify from '../libs/notify'
-
+import { observer } from 'mobx-react-lite'
 let schema = yup.object().shape({
   username: yup.string().required('Please enter a valid username'),
   password: yup.string().required('Please enter a valid password'),
@@ -35,9 +34,7 @@ type FormValues = {
   password: string
 }
 
-const LoginView: React.FC = () => {
-  const isAuthentication = useAuthenticaion()
-
+const LoginView = observer(() => {
   const notify = useNotify()
   const history = useHistory()
 
@@ -66,10 +63,10 @@ const LoginView: React.FC = () => {
   }
   useEffect(() => {
     checkLogin()
-  }, [isAuthentication])
+  }, [authenticationStore.isAuthenticated])
 
   function checkLogin() {
-    if (isAuthentication) {
+    if (authenticationStore.isAuthenticated) {
       history.push('/restock-reports')
     }
   }
@@ -78,7 +75,7 @@ const LoginView: React.FC = () => {
     method,
     handleLogin,
   })
-}
+})
 
 type FormProps = {
   method: any

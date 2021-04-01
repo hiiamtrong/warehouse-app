@@ -10,7 +10,13 @@ import Item, { IItem } from '../models/item'
 
 const ItemDetail = observer(() => {
   const { itemStore, restockReportStore } = useContext(AppContext)
-  const { restockReport, waiting, countMobile, fetchById } = restockReportStore
+  const {
+    restockReport,
+    waiting,
+    countMobile,
+    fetchById,
+    setWaiting,
+  } = restockReportStore
 
   let { item, setItem } = itemStore
 
@@ -24,9 +30,14 @@ const ItemDetail = observer(() => {
   useEffect(() => {
     ;(async () => {
       if (!restockReport || restockReportId !== restockReport._id) {
-        await fetchById(restockReportId).catch((err) => {
-          notify.errorFromServer(err)
-        })
+        setWaiting(true)
+        await fetchById(restockReportId)
+          .catch((err) => {
+            notify.errorFromServer(err)
+          })
+          .finally(() => {
+            setWaiting(false)
+          })
       }
       const _item = find(restockReport?.items, (item) => {
         return item.product._id === productId
@@ -41,6 +52,7 @@ const ItemDetail = observer(() => {
     const itemIndex = findIndex(restockReport?.items, (item: Item) => {
       return item.product._id === productId
     })
+    setWaiting(true)
     await countMobile({ quantity, restockReportId, itemIndex })
       .then((restockReport) => {
         const nextItem: IItem = restockReport?.items[itemIndex + 1]
@@ -55,8 +67,10 @@ const ItemDetail = observer(() => {
       .catch((err) => {
         notify.errorFromServer(err)
       })
+      .finally(() => {
+        setWaiting(false)
+      })
   }
-  console.log({ item })
   return (
     <>
       {item &&

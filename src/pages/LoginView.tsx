@@ -16,18 +16,14 @@ import {
   IonToolbar,
 } from '@ionic/react'
 import { personCircle } from 'ionicons/icons'
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import * as yup from 'yup'
 import withLoading from '../components/Loading'
-import { REDUX_STATUS } from '../constants'
+import { AppContext } from '../context'
 import useAuthenticaion from '../hook/useAuthentication'
 import useNotify from '../libs/notify'
-import { RootState } from '../reducers/rootReducer'
-import { login } from '../reducers/userSlice'
-import { AppDispatch } from '../store'
 
 let schema = yup.object().shape({
   username: yup.string().required('Please enter a valid username'),
@@ -41,11 +37,11 @@ type FormValues = {
 
 const LoginView: React.FC = () => {
   const isAuthentication = useAuthenticaion()
-  const { waiting } = useSelector((state: RootState) => state.auth)
+
   const notify = useNotify()
   const history = useHistory()
 
-  const dispatch: AppDispatch = useDispatch()
+  const { authenticationStore } = useContext(AppContext)
 
   const method = useForm<FormValues>({
     defaultValues: {
@@ -59,14 +55,14 @@ const LoginView: React.FC = () => {
     username,
     password,
   }) => {
-    const action = login({ username, password })
-    await dispatch(action).then((action) => {
-      if (action.type.match(REDUX_STATUS.SUCCESS)) {
+    await authenticationStore
+      .login(username, password)
+      .then(() => {
         notify.success('Đăng nhập thành công')
-      } else if (action.type.match(REDUX_STATUS.FAIL)) {
-        notify.errorFromServer(action.payload)
-      }
-    })
+      })
+      .catch((err) => {
+        notify.errorFromServer(err)
+      })
   }
   useEffect(() => {
     checkLogin()
@@ -77,7 +73,11 @@ const LoginView: React.FC = () => {
       history.push('/restock-reports')
     }
   }
-  return withLoading(LoginViewLoading)({ waiting, method, handleLogin })
+  return withLoading(LoginViewLoading)({
+    waiting: authenticationStore.waiting,
+    method,
+    handleLogin,
+  })
 }
 
 type FormProps = {

@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Redirect, Route } from 'react-router'
-import useAuthenticaion from '../hook/useAuthentication'
+import { AppContext } from '../context'
 
 type PrivateRouteProps = {
   component: any
@@ -9,8 +9,8 @@ type PrivateRouteProps = {
 }
 
 function PrivateRoute({ component, ...props }: PrivateRouteProps) {
-  const isAuthentication = useAuthenticaion()
-  if (isAuthentication) {
+  const { authenticationStore } = useContext(AppContext)
+  if (authenticationStore.isAuthenticated) {
     return <Route {...props} component={component} />
   }
   return <Redirect to="/login" />

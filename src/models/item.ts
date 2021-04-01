@@ -1,4 +1,4 @@
-export interface Item {
+export interface IItem {
     product: { _id: string };
     sku: string;
     description: string;
@@ -8,4 +8,4 @@ export interface Item {
     takenQuantity: number
 }
 
-export default Item;
+export default IItem;

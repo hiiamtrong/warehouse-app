@@ -1,16 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
-import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 import reportWebVitals from './reportWebVitals'
-import { Provider } from 'react-redux'
-import store from './store'
-
+import * as serviceWorkerRegistration from './serviceWorkerRegistration'
+import { AppContext } from './context'
+import { RootStore } from './store'
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
+    <AppContext.Provider value={new RootStore()}>
       <App />
-    </Provider>
+    </AppContext.Provider>
   </React.StrictMode>,
   document.getElementById('root')
 )

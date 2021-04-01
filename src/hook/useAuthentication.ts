@@ -1,9 +1,11 @@
-import { useSelector } from 'react-redux';
-import { RootState } from '../reducers/rootReducer';
+import { useContext } from "react";
+import { AppContext } from "../context";
+
 
 function useAuthenticaion() {
-    const { user, token } = useSelector((state: RootState) => state.auth)
-    return user && token
+    const { authenticationStore } = useContext(AppContext)
+
+    return authenticationStore.isAuthenticated
 }
 
 export default useAuthenticaion;

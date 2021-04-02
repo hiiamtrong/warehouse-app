@@ -14,10 +14,10 @@ import {
   IonSelect,
   IonSelectOption,
   IonTitle,
-  IonToolbar,
+  IonToolbar
 } from '@ionic/react'
 import { filterCircle } from 'ionicons/icons'
-import { filter, get, map } from 'lodash'
+import { filter, get, isNull, isUndefined, map } from 'lodash'
 import { observer } from 'mobx-react-lite'
 import React, { useMemo, useState } from 'react'
 
@@ -40,10 +40,13 @@ const RestockReportDetailView = observer(
           item.takenQuantity >= 0 && item.takenQuantity !== item.restockQuantity
         )
       }
+      if (status === 'not-taken') {
+        return isUndefined(item.takenQuantity) || isNull(item.takenQuantity)
+      }
     })
     const filterItems = useMemo(() => {
       return filterRestockReportItems
-    }, [status])
+    }, [status, restockReport])
 
     return (
       <IonPage>
@@ -63,12 +66,11 @@ const RestockReportDetailView = observer(
                 onIonChange={(e) => setStatus(e.detail.value)}
               >
                 <IonSelectOption value="all">Tất cả</IonSelectOption>
-                <IonSelectOption value="taken-enough">
-                  Đã lấy đủ
-                </IonSelectOption>
+                <IonSelectOption value="taken-enough">Lấy đủ</IonSelectOption>
                 <IonSelectOption value="taken-missing">
-                  Đã lấy thiếu
+                  Lấy thiếu
                 </IonSelectOption>
+                <IonSelectOption value="not-taken">Chưa lấy</IonSelectOption>
               </IonSelect>
             </IonItem>
           </IonToolbar>

@@ -25,12 +25,13 @@ export class RestockReportStore {
             waiting: observable,
             fetchById: action,
             countMobile: action,
-            setWaiting: action
+            setWaiting: action,
+            setRestockReport: action
         });
     }
 
 
-    setRestockReport(restockReport: RestockReport) {
+    setRestockReport = (restockReport: RestockReport) => {
         this.restockReport = restockReport
         LocalStorage.setRestockReport(restockReport)
     }
@@ -50,7 +51,6 @@ export class RestockReportStore {
         try {
 
             const response = await RestockReportAPI.countMobile(restockReportId, itemIndex, quantity)
-            this.setRestockReport(response)
             return response
         } catch (error) {
             throw error

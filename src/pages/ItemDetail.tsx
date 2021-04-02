@@ -16,6 +16,7 @@ const ItemDetail = observer(() => {
     countMobile,
     fetchById,
     setWaiting,
+    setRestockReport,
   } = restockReportStore
 
   let { item, setItem } = itemStore
@@ -40,7 +41,7 @@ const ItemDetail = observer(() => {
           })
       }
       const _item = find(restockReport?.items, (item) => {
-        return item.product._id === productId
+        return item?.product?._id === productId
       })
       if (_item) {
         setItem(_item)
@@ -55,6 +56,7 @@ const ItemDetail = observer(() => {
     setWaiting(true)
     await countMobile({ quantity, restockReportId, itemIndex })
       .then((restockReport) => {
+        setRestockReport(restockReport)
         const nextItem: IItem = restockReport?.items[itemIndex + 1]
         if (nextItem) {
           history.push(

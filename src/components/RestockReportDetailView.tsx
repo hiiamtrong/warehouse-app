@@ -14,10 +14,10 @@ import {
   IonSelect,
   IonSelectOption,
   IonTitle,
-  IonToolbar
+  IonToolbar,
 } from '@ionic/react'
 import { filterCircle } from 'ionicons/icons'
-import { filter, get, isNull, isUndefined, map } from 'lodash'
+import { filter, get, isNull, isUndefined, map, sortBy } from 'lodash'
 import { observer } from 'mobx-react-lite'
 import React, { useMemo, useState } from 'react'
 
@@ -28,22 +28,28 @@ type RestockReportProps = {
 const RestockReportDetailView = observer(
   ({ restockReport, viewProductDetail }: RestockReportProps) => {
     const [status, setStatus] = useState('all')
-    const filterRestockReportItems = filter(restockReport?.items, (item) => {
-      if (status === 'all') {
-        return true
+    const filterRestockReportItems = filter(
+      sortBy(restockReport?.items, (item) => {
+        return !(item.takenQuantity === item.restockQuantity)
+      }),
+      (item) => {
+        if (status === 'all') {
+          return true
+        }
+        if (status === 'taken-enough') {
+          return item.takenQuantity === item.restockQuantity
+        }
+        if (status === 'taken-missing') {
+          return (
+            item.takenQuantity >= 0 &&
+            item.takenQuantity !== item.restockQuantity
+          )
+        }
+        if (status === 'not-taken') {
+          return isUndefined(item.takenQuantity) || isNull(item.takenQuantity)
+        }
       }
-      if (status === 'taken-enough') {
-        return item.takenQuantity === item.restockQuantity
-      }
-      if (status === 'taken-missing') {
-        return (
-          item.takenQuantity >= 0 && item.takenQuantity !== item.restockQuantity
-        )
-      }
-      if (status === 'not-taken') {
-        return isUndefined(item.takenQuantity) || isNull(item.takenQuantity)
-      }
-    })
+    )
     const filterItems = useMemo(() => {
       return filterRestockReportItems
     }, [status, restockReport])
@@ -83,6 +89,8 @@ const RestockReportDetailView = observer(
                   color={
                     item.takenQuantity === item.restockQuantity
                       ? 'success'
+                      : item.takenQuantity >= 0
+                      ? 'warning'
                       : 'light'
                   }
                   key={item.sku}

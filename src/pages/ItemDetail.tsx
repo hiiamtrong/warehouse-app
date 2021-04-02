@@ -54,7 +54,7 @@ const ItemDetail = observer(() => {
       return item.product._id === productId
     })
     setWaiting(true)
-    await countMobile({ quantity, restockReportId, itemIndex })
+    await countMobile({ quantity, restockReportId, productId })
       .then((restockReport) => {
         setRestockReport(restockReport)
         const nextItem: IItem = restockReport?.items[itemIndex + 1]

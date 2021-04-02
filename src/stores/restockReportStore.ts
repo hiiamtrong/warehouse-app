@@ -6,8 +6,6 @@ import { RootStore } from "../store";
 
 
 export class RestockReportStore {
-
-
     rootStore: RootStore;
     restockReport: RestockReport | undefined
     waiting = false;
@@ -47,10 +45,9 @@ export class RestockReportStore {
         }
     }
 
-    countMobile = async ({ restockReportId, itemIndex, quantity }: { restockReportId: string, itemIndex: number, quantity: number }) => {
+    countMobile = async ({ restockReportId, productId, quantity }: { restockReportId: string, productId: string, quantity: number }) => {
         try {
-
-            const response = await RestockReportAPI.countMobile(restockReportId, itemIndex, quantity)
+            const response = await RestockReportAPI.countMobile(restockReportId, productId, quantity)
             return response
         } catch (error) {
             throw error

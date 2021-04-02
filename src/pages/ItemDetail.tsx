@@ -50,14 +50,19 @@ const ItemDetail = observer(() => {
   }, [productId, restockReportId])
 
   async function handleCountMobile({ quantity }: { quantity: number }) {
-    const itemIndex = findIndex(restockReport?.items, (item: Item) => {
-      return item.product._id === productId
-    })
     setWaiting(true)
     await countMobile({ quantity, restockReportId, productId })
-      .then((restockReport) => {
-        setRestockReport(restockReport)
-        const nextItem: IItem = restockReport?.items[itemIndex + 1]
+      .then((item) => {
+        const itemIndex = findIndex(restockReport?.items, (item: Item) => {
+          return item.product._id === productId
+        })
+
+        if (restockReport) {
+          restockReport.items[itemIndex] = item
+          setRestockReport(restockReport)
+        }
+
+        const nextItem: IItem | undefined = restockReport?.items[itemIndex + 1]
         if (nextItem) {
           history.push(
             `/restock-reports/${restockReportId}/view/${nextItem.product._id}`

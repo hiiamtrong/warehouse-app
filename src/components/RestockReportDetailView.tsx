@@ -58,7 +58,7 @@ const RestockReportDetailView = observer(
       <IonPage>
         <IonHeader>
           <IonToolbar>
-            <IonCol className="ion-text-left">
+            <IonCol className='ion-text-left'>
               <IonTitle>
                 Restock Report {get(restockReport, 'restockReportId')}
               </IonTitle>
@@ -68,20 +68,20 @@ const RestockReportDetailView = observer(
               <IonLabel>Filter</IonLabel>
               <IonSelect
                 value={status}
-                placeholder="Select One"
+                placeholder='Select One'
                 onIonChange={(e) => setStatus(e.detail.value)}
               >
-                <IonSelectOption value="all">Tất cả</IonSelectOption>
-                <IonSelectOption value="taken-enough">Lấy đủ</IonSelectOption>
-                <IonSelectOption value="taken-missing">
+                <IonSelectOption value='all'>Tất cả</IonSelectOption>
+                <IonSelectOption value='taken-enough'>Lấy đủ</IonSelectOption>
+                <IonSelectOption value='taken-missing'>
                   Lấy thiếu
                 </IonSelectOption>
-                <IonSelectOption value="not-taken">Chưa lấy</IonSelectOption>
+                <IonSelectOption value='not-taken'>Chưa lấy</IonSelectOption>
               </IonSelect>
             </IonItem>
           </IonToolbar>
         </IonHeader>
-        <IonContent fullscreen className="ion-padding ion-text-center">
+        <IonContent fullscreen className='ion-padding ion-text-center'>
           <IonGrid>
             {map(filterItems, (item) => {
               return (
@@ -96,29 +96,29 @@ const RestockReportDetailView = observer(
                   key={item.sku}
                   onClick={() => viewProductDetail(get(item, 'product._id'))}
                 >
-                  <IonCardHeader className="ion-text-center">
+                  <IonCardHeader className='ion-text-center'>
                     <IonCardTitle>
                       <IonRow>
-                        <IonCol className="ion-text-left">
+                        <IonCol className='ion-text-left'>
                           {item.sku} - {item.description}
                         </IonCol>
-                        <IonCol className="ion-text-right">
+                        <IonCol className='ion-text-right'>
                           {get(item, 'currentLocation.code', '')}
                         </IonCol>
                       </IonRow>
                       <br></br>
                       <IonRow>
-                        <IonCol className="ion-text-left">
+                        <IonCol className='ion-text-left'>
                           {'Tồn kho'} {item.khoQuantity}
                         </IonCol>
-                        <IonCol className="ion-text-right">
+                        <IonCol className='ion-text-right'>
                           {'Cần lấy'} {item.restockQuantity}
                         </IonCol>
                       </IonRow>
                       {item.takenQuantity >= 0 && (
                         <IonRow>
-                          <IonCol className="ion-text-left"></IonCol>
-                          <IonCol className="ion-text-right">
+                          <IonCol className='ion-text-left'></IonCol>
+                          <IonCol className='ion-text-right'>
                             {'Đã lấy'} {item.takenQuantity}
                           </IonCol>
                         </IonRow>

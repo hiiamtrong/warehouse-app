@@ -1,0 +1,3 @@
+{
+  "*.{ts,tsx,html,css}": "npm run format:prettier"
+}

@@ -44,9 +44,9 @@ const Menu = observer(() => {
   const { authenticationStore } = useContext(AppContext)
   const { user } = authenticationStore
   return (
-    <IonMenu contentId="main" type="overlay">
+    <IonMenu contentId='main' type='overlay'>
       <IonContent>
-        <IonList id="inbox-list">
+        <IonList id='inbox-list'>
           <IonListHeader>
             {!isEmpty(user) ? user?.displayName : 'Không xác định'}
           </IonListHeader>
@@ -58,12 +58,12 @@ const Menu = observer(() => {
                     location.pathname === appPage.url ? 'selected' : ''
                   }
                   routerLink={appPage.url}
-                  routerDirection="none"
-                  lines="none"
+                  routerDirection='none'
+                  lines='none'
                   detail={false}
                 >
                   <IonIcon
-                    slot="start"
+                    slot='start'
                     ios={appPage.iosIcon}
                     md={appPage.mdIcon}
                   />

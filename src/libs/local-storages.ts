@@ -1,49 +1,65 @@
+import { isEmpty } from 'lodash'
+import store from 'store'
 import Item from "../models/item"
 import RestockReport from "../models/restock-report"
 import User from "../models/user"
+import { Credentials } from '../stores/authenticationStore'
+
 
 const LocalStorage = {
-    getToken: () => localStorage.getItem('token'),
-    setToken: (token: string) => { localStorage.setItem('token', token) },
+    getToken: () => store.get('token'),
+    setToken: (token: string) => { store.set('token', token) },
     getUser: () => {
-        const user = localStorage.getItem('user')
-        return user ? JSON.parse(user) : {}
+        const user = store.get('user')
+        return user
     },
     setUser: (user: User) => {
-        if (user) {
-            localStorage.setItem('user', JSON.stringify(user))
+        if (!isEmpty(user)) {
+            store.set('user', (user))
         }
+    },
 
+    setCredentials: (credentials: Credentials) => {
+        if (!isEmpty(credentials)) {
+            store.set('credentials', credentials)
+        }
+    },
+
+    getCredentials: () => {
+        const credentials = store.get('credentials')
+        return credentials
+    },
+    clearCredentials: () => {
+        store.remove('credentials')
     },
 
     getRestockReport: () => {
-        const restockReport = localStorage.getItem('restockReport')
-        return restockReport ? JSON.parse(restockReport) : {}
+        const restockReport = store.get('restockReport')
+        return restockReport
     },
     setRestockReport: (restockReport: RestockReport) => {
-        if (restockReport) {
-            localStorage.setItem('restockReport', JSON.stringify(restockReport))
+        if (!isEmpty(restockReport)) {
+            store.set('restockReport', (restockReport))
         }
 
     },
 
     getItem: () => {
-        const item = localStorage.getItem('item')
-        return item ? JSON.parse(item) : {}
+        const item = store.get('item')
+        return item
     },
     setItem: (item: Item) => {
-        if (item) {
-            localStorage.setItem('item', JSON.stringify(item))
+        if (!isEmpty(item)) {
+            store.set('item', (item))
         }
 
     },
 
-    getExpired: () => localStorage.getItem('expired'),
+    getExpired: () => store.get('expired'),
     setExpired: (expired: string) => {
         if (expired) {
-            localStorage.setItem('expired', expired)
+            store.set('expired', expired)
         }
-
     }
 }
 

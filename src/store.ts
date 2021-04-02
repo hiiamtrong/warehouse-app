@@ -1,24 +1,14 @@
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
-import { useDispatch } from 'react-redux';
-import {
-    FLUSH,
-    PAUSE,
-    PERSIST,
-    PURGE,
-    REGISTER, REHYDRATE
-} from 'redux-persist';
-import { fetchById } from './reducers/restockReportSlice';
-import rootReducer from './reducers/rootReducer';
-import { login } from './reducers/userSlice';
-const store = configureStore({
-    reducer: rootReducer,
-    middleware: getDefaultMiddleware({
-        serializableCheck: {
-            ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER, login.rejected.toString(), login.fulfilled.toString(), login.pending.toString(), fetchById.fulfilled.toString(), fetchById.rejected.toString(), fetchById.pending.toString()],
-        },
-    }),
-})
+import { AuthenticationStore } from "./stores/authenticationStore";
+import { RestockReportStore } from "./stores/restockReportStore";
+import { ItemStore } from "./stores/itemStore";
 
-export type AppDispatch = typeof store.dispatch
-export const useAppDispatch = () => useDispatch<AppDispatch>() // Export a hook t
-export default store
+export class RootStore {
+    authenticationStore: AuthenticationStore;
+    restockReportStore: RestockReportStore;
+    itemStore: ItemStore;
+    constructor() {
+        this.authenticationStore = new AuthenticationStore(this);
+        this.restockReportStore = new RestockReportStore(this);
+        this.itemStore = new ItemStore(this)
+    }
+}

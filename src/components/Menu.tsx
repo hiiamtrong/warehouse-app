@@ -7,13 +7,13 @@ import {
   IonListHeader,
   IonMenu,
   IonMenuToggle,
-  IonNote,
 } from '@ionic/react'
 import { personCircle } from 'ionicons/icons'
 import { isEmpty } from 'lodash'
-import { useSelector } from 'react-redux'
+import { observer } from 'mobx-react-lite'
+import { useContext } from 'react'
 import { useLocation } from 'react-router-dom'
-import { RootState } from '../reducers/rootReducer'
+import { AppContext } from '../context'
 import './Menu.css'
 
 interface AppPage {
@@ -38,15 +38,17 @@ const appPages: AppPage[] = [
   },
 ]
 
-const Menu: React.FC = () => {
+const Menu = observer(() => {
   const location = useLocation()
-  const user = useSelector((state: RootState) => state.auth.user)
+
+  const { authenticationStore } = useContext(AppContext)
+  const { user } = authenticationStore
   return (
     <IonMenu contentId="main" type="overlay">
       <IonContent>
         <IonList id="inbox-list">
           <IonListHeader>
-            {!isEmpty(user) ? user.displayName : 'Không xác định'}
+            {!isEmpty(user) ? user?.displayName : 'Không xác định'}
           </IonListHeader>
           {appPages.map((appPage, index) => {
             return (
@@ -74,6 +76,6 @@ const Menu: React.FC = () => {
       </IonContent>
     </IonMenu>
   )
-}
+})
 
 export default Menu

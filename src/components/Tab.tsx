@@ -7,24 +7,20 @@ import {
   IonTabs,
 } from '@ionic/react'
 import { list, pricetag, reader } from 'ionicons/icons'
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useContext } from 'react'
 import { Redirect, Route } from 'react-router'
+import { AppContext } from '../context'
 import ItemDetailView from '../pages/ItemDetail'
 import LoginView from '../pages/LoginView'
 import RestockReportDetailView from '../pages/RestockReportDetail'
 import RestockReportsView from '../pages/RestockReportView'
-import { RootState } from '../reducers/rootReducer'
 import PrivateRoute from './PrivateRoute'
-
-export const TabMenu: React.FC = () => {
-  const { restockReport } = useSelector(
-    (state: RootState) => state.restockReport
-  )
-  const { item } = useSelector((state: RootState) => state.item)
-
+import { observer } from 'mobx-react-lite'
+export const TabMenu = observer(() => {
+  const { itemStore, restockReportStore } = useContext(AppContext)
+  const { item } = itemStore
+  const { restockReport } = restockReportStore
   const productId = item?.product?._id
-
   const restockReportId = restockReport?._id
   return (
     <IonTabs>
@@ -73,4 +69,4 @@ export const TabMenu: React.FC = () => {
       </IonTabBar>
     </IonTabs>
   )
-}
+})

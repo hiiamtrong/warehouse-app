@@ -15,10 +15,11 @@ import '@ionic/react/css/text-alignment.css'
 import '@ionic/react/css/text-transformation.css'
 import '@ionic/react/css/typography.css'
 import { TabMenu } from './components/Tab'
+import { observer } from 'mobx-react-lite'
 /* Theme variables */
 import './theme/variables.css'
 
-const App: React.FC = () => {
+const App = observer(() => {
   return (
     <div>
       <IonApp>
@@ -30,6 +31,6 @@ const App: React.FC = () => {
       </IonApp>
     </div>
   )
-}
+})
 
 export default App

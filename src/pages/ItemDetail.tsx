@@ -1,80 +1,87 @@
-import { find, findIndex, get, isEmpty } from 'lodash'
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { RouteComponentProps } from 'react-router-dom'
+import { find, findIndex, get } from 'lodash'
+import { observer } from 'mobx-react-lite'
+import { useContext, useEffect } from 'react'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 import ItemDetailView from '../components/ItemDetailView'
 import withLoading from '../components/Loading'
+import { AppContext } from '../context'
 import useNotify from '../libs/notify'
-import Item from '../models/item'
-import RestockReport from '../models/restock-report'
-import { setItem } from '../reducers/itemSlice'
-import { countMobile, fetchById } from '../reducers/restockReportSlice'
-import { RootState } from '../reducers/rootReducer'
-import { AppDispatch } from '../store'
+import Item, { IItem } from '../models/item'
 
-interface ItemDetailPageProps
-  extends RouteComponentProps<{
-    id: string
-  }> {}
+const ItemDetail = observer(() => {
+  const { itemStore, restockReportStore } = useContext(AppContext)
+  const {
+    restockReport,
+    waiting,
+    countMobile,
+    fetchById,
+    setWaiting,
+    setRestockReport,
+  } = restockReportStore
 
-const ItemDetail: React.FC<ItemDetailPageProps> = ({ match }) => {
-  const { restockReport, waiting } = useSelector(
-    (state: RootState) => state.restockReport
-  )
-  let { item } = useSelector((state: RootState) => state.item)
-  const dispatch: AppDispatch = useDispatch()
+  let { item, setItem } = itemStore
+
   const notify = useNotify()
+  const match = useRouteMatch()
+  const history = useHistory()
 
   const productId = get(match, 'params.productId')
   const restockReportId = get(match, 'params.restockReportId')
+
   useEffect(() => {
-    async function getRestockReportDetail() {
-      if (restockReportId) {
-        if (isEmpty(restockReport) || restockReport?._id !== restockReportId) {
-          const action = fetchById(restockReportId)
-          await dispatch(action).catch((err) => {
+    ;(async () => {
+      if (!restockReport || restockReportId !== restockReport._id) {
+        setWaiting(true)
+        await fetchById(restockReportId)
+          .catch((err) => {
             notify.errorFromServer(err)
           })
-          getProductDetail({ restockReport, productId })
-        } else {
-          getProductDetail({ restockReport, productId })
-        }
+          .finally(() => {
+            setWaiting(false)
+          })
       }
-    }
-
-    function getProductDetail({
-      productId,
-      restockReport,
-    }: {
-      productId: String
-      restockReport: RestockReport
-    }) {
-      const newItem = find(get(restockReport, 'items', []), (item) => {
-        return item.product._id === productId
+      const _item = find(restockReport?.items, (item) => {
+        return item?.product?._id === productId
       })
-
-      if (newItem) {
-        const action = setItem(newItem)
-        dispatch(action)
+      if (_item) {
+        setItem(_item)
       }
-    }
-
-    getRestockReportDetail()
-  }, [])
+    })()
+  }, [productId, restockReportId])
 
   async function handleCountMobile({ quantity }: { quantity: number }) {
-    const itemIndex = findIndex(restockReport.items, (item: Item) => {
+    const itemIndex = findIndex(restockReport?.items, (item: Item) => {
       return item.product._id === productId
     })
-    const action = countMobile({ quantity, restockReportId, itemIndex })
-    await dispatch(action)
+    setWaiting(true)
+    await countMobile({ quantity, restockReportId, itemIndex })
+      .then((restockReport) => {
+        setRestockReport(restockReport)
+        const nextItem: IItem = restockReport?.items[itemIndex + 1]
+        if (nextItem) {
+          history.push(
+            `/restock-reports/${restockReportId}/view/${nextItem.product._id}`
+          )
+        } else {
+          history.push(`/restock-reports/${restockReportId}`)
+        }
+      })
+      .catch((err) => {
+        notify.errorFromServer(err)
+      })
+      .finally(() => {
+        setWaiting(false)
+      })
   }
-
-  return withLoading(ItemDetailView)({
-    waiting,
-    item,
-    handleCountMobile,
-  })
-}
-
+  return (
+    <>
+      {item &&
+        withLoading(ItemDetailView)({
+          waiting,
+          item,
+          handleCountMobile,
+        })}
+    </>
+  )
+})
 export default ItemDetail

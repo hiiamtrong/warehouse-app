@@ -53,6 +53,7 @@ const ItemDetail = observer(() => {
     setWaiting(true)
     await countMobile({ quantity, restockReportId, productId })
       .then((item) => {
+        setItem(item)
         const itemIndex = findIndex(restockReport?.items, (item: Item) => {
           return item.product._id === productId
         })

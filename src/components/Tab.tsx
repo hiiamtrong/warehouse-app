@@ -25,33 +25,33 @@ export const TabMenu = observer(() => {
   return (
     <IonTabs>
       <IonRouterOutlet>
-        <Route path="/login" exact component={LoginView} />
-        <Redirect exact from="/" to="/restock-reports" />
+        <Route path='/login' exact component={LoginView} />
+        <Redirect exact from='/' to='/restock-reports' />
         <PrivateRoute
-          path="/restock-reports"
+          path='/restock-reports'
           exact
           component={RestockReportsView}
         />
         <PrivateRoute
-          path="/restock-reports/:restockReportId"
+          path='/restock-reports/:restockReportId'
           exact
           component={RestockReportDetailView}
         />
         <PrivateRoute
-          path="/restock-reports/:restockReportId/view/:productId"
+          path='/restock-reports/:restockReportId/view/:productId'
           component={ItemDetailView}
           exact={true}
         />
       </IonRouterOutlet>
-      <IonTabBar slot="bottom">
-        <IonTabButton tab="restock-reports" href="/restock-reports">
+      <IonTabBar slot='bottom'>
+        <IonTabButton tab='restock-reports' href='/restock-reports'>
           <IonIcon icon={list} />
           <IonLabel>Restock Reports</IonLabel>
         </IonTabButton>
 
         <IonTabButton
           disabled={!restockReportId}
-          tab="list-items"
+          tab='list-items'
           href={`/restock-reports/${restockReportId}`}
         >
           <IonIcon icon={reader} />
@@ -60,7 +60,7 @@ export const TabMenu = observer(() => {
 
         <IonTabButton
           disabled={!restockReportId || !productId}
-          tab="item-detail"
+          tab='item-detail'
           href={`/restock-reports/${restockReportId}/view/${productId}`}
         >
           <IonIcon icon={pricetag} />

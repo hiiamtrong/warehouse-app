@@ -13,7 +13,7 @@ function PrivateRoute({ component, ...props }: PrivateRouteProps) {
   if (authenticationStore.isAuthenticated) {
     return <Route {...props} component={component} />
   }
-  return <Redirect to="/login" />
+  return <Redirect to='/login' />
 }
 
 export default PrivateRoute

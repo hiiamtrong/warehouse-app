@@ -91,7 +91,7 @@ const LoginViewLoading: React.FC<FormProps> = ({ method, handleLogin }) => {
             <IonTitle>Login</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <IonContent fullscreen className="ion-padding ion-text-center">
+        <IonContent fullscreen className='ion-padding ion-text-center'>
           <IonGrid>
             <IonRow>
               <IonCol>
@@ -104,14 +104,14 @@ const LoginViewLoading: React.FC<FormProps> = ({ method, handleLogin }) => {
             <IonRow>
               <IonCol>
                 <IonItem>
-                  <IonLabel position="floating">Username</IonLabel>
+                  <IonLabel position='floating'>Username</IonLabel>
                   <IonInput
-                    type="text"
-                    name="username"
+                    type='text'
+                    name='username'
                     ref={register}
                   ></IonInput>
                   {errors && errors['username'] && (
-                    <IonText color="danger" className="ion-padding-start">
+                    <IonText color='danger' className='ion-padding-start'>
                       <small>{errors['username'].message}</small>
                     </IonText>
                   )}
@@ -121,14 +121,14 @@ const LoginViewLoading: React.FC<FormProps> = ({ method, handleLogin }) => {
             <IonRow>
               <IonCol>
                 <IonItem>
-                  <IonLabel position="floating"> Password</IonLabel>
+                  <IonLabel position='floating'> Password</IonLabel>
                   <IonInput
-                    type="password"
-                    name="password"
+                    type='password'
+                    name='password'
                     ref={register}
                   ></IonInput>
                   {errors && errors['password'] && (
-                    <IonText color="danger" className="ion-padding-start">
+                    <IonText color='danger' className='ion-padding-start'>
                       <small>{errors['password'].message}</small>
                     </IonText>
                   )}
@@ -137,7 +137,7 @@ const LoginViewLoading: React.FC<FormProps> = ({ method, handleLogin }) => {
             </IonRow>
             <IonRow>
               <IonCol>
-                <IonButton expand="block" type="submit">
+                <IonButton expand='block' type='submit'>
                   Login
                 </IonButton>
               </IonCol>

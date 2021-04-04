@@ -61,12 +61,12 @@ const RestockReportsViewLoading = function ({
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle className="ion-padding ion-text-center">
+          <IonTitle className='ion-padding ion-text-center'>
             Restock Reports{' '}
           </IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen className="ion-padding ion-text-center">
+      <IonContent fullscreen className='ion-padding ion-text-center'>
         <IonGrid>
           {map(restockReports, (restockReport) => {
             return (
@@ -75,7 +75,7 @@ const RestockReportsViewLoading = function ({
                 onClick={() => goToRestockReport(restockReport._id)}
               >
                 <IonItem>
-                  <IonLabel className="ion-text-center">
+                  <IonLabel className='ion-text-center'>
                     <IonRow>
                       <IonCol>{restockReport.restockReportId}</IonCol>
                       <IonCol>

@@ -5,23 +5,27 @@ import LocalStorage from './local-storages'
 
 export const axiosClient = axios.create({ baseURL: WORK_URL })
 
-axiosClient.interceptors.request.use((config: AxiosRequestConfig) => {
+axiosClient.interceptors.request.use(
+  (config: AxiosRequestConfig) => {
     const token = LocalStorage.getToken()
     config.headers['Authorization'] = `Bearer ${token}`
     return config
-}, (error) => {
+  },
+  (error) => {
+    return Promise.reject(error.response)
+  }
+)
 
-    return Promise.reject(error.response);
-})
-
-
-axiosClient.interceptors.response.use((response: AxiosResponse) => {
+axiosClient.interceptors.response.use(
+  (response: AxiosResponse) => {
     return response.data
-}, (error) => {
+  },
+  (error) => {
     if (error.response.status === 400) {
-        history.push('/login')
+      history.push('/login')
     }
-    return Promise.reject(error.response);
-});
+    return Promise.reject(error.response)
+  }
+)
 
 export default axiosClient

@@ -1,68 +1,65 @@
-import { action, computed, makeObservable, observable } from "mobx";
-import AuthAPI from "../api/authAPI";
-import LocalStorage from "../libs/local-storages";
-import IUser from "../models/user";
-import { RootStore } from "../store";
-
+import { action, computed, makeObservable, observable } from 'mobx'
+import AuthAPI from '../api/authAPI'
+import LocalStorage from '../libs/local-storages'
+import IUser from '../models/user'
+import { RootStore } from '../store'
 
 export interface Credentials {
-    user: IUser;
-    token: string;
-    expired: string;
+  user: IUser
+  token: string
+  expired: string
 }
 
 export class AuthenticationStore {
+  rootStore: RootStore
 
+  user: IUser | null = null
+  token: string | null = null
+  expired: Date | null = null
 
-    rootStore: RootStore;
+  waiting = false
 
-    user: IUser | null = null;
-    token: string | null = null;
-    expired: Date | null = null;;
+  constructor(rootStore: RootStore) {
+    this.rootStore = rootStore
 
-    waiting = false;
-
-    constructor(rootStore: RootStore) {
-        this.rootStore = rootStore;
-
-        const credentials = LocalStorage.getCredentials()
-        if (credentials && credentials.user) {
-            this.setCredentials(credentials);
-        }
-
-        makeObservable(this, {
-            token: observable,
-            waiting: observable,
-            isAuthenticated: computed,
-            login: action,
-            setCredentials: action,
-            logout: action,
-        });
+    const credentials = LocalStorage.getCredentials()
+    if (credentials && credentials.user) {
+      this.setCredentials(credentials)
     }
 
-    get isAuthenticated() {
-        return !!this.token && !!this.user;
-    }
+    makeObservable(this, {
+      token: observable,
+      waiting: observable,
+      isAuthenticated: computed,
+      login: action,
+      setCredentials: action,
+      logout: action,
+    })
+  }
 
-    setCredentials({ user, token, expired }: Credentials) {
-        this.user = user;
-        this.token = token;
-        this.expired = new Date(expired);
-        LocalStorage.setUser(user)
-        LocalStorage.setExpired(expired)
-        LocalStorage.setToken(token)
-        LocalStorage.setCredentials({ user, token, expired });
-    }
+  get isAuthenticated() {
+    return !!this.token && !!this.user
+  }
 
-    async login(username: string, password: string) {
-        const credentials = await AuthAPI.login({ username, password })
-        this.setCredentials(credentials);
-    }
+  setCredentials({ user, token, expired }: Credentials) {
+    this.user = user
+    this.token = token
+    this.expired = new Date(expired)
+    LocalStorage.setUser(user)
+    LocalStorage.setExpired(expired)
+    LocalStorage.setToken(token)
+    LocalStorage.setCredentials({ user, token, expired })
+  }
 
-    async logout() {
-        LocalStorage.clearCredentials()
-        this.user = null;
-        this.token = null;
-        this.expired = null;
-    }
+  async login(username: string, password: string) {
+    const credentials = await AuthAPI.login({ username, password })
+    this.setCredentials(credentials)
+  }
+
+  async logout() {
+    LocalStorage.clearCredentials()
+    this.user = null
+    this.token = null
+    this.expired = null
+  }
 }

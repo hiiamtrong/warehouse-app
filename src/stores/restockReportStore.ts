@@ -42,27 +42,17 @@ export class RestockReportStore {
     }
   }
 
-  countMobile = async ({
-    restockReportId,
-    productId,
-    quantity,
-  }: {
-    restockReportId: string
-    productId: string
-    quantity: number
-  }) => {
+  countMobile = async ({ restockReportId, productId, quantity }: { restockReportId: string, productId: string, quantity: number }) => {
     try {
-      const response = await RestockReportAPI.countMobile(
-        restockReportId,
-        productId,
-        quantity
-      )
-      return response
+      const item = await RestockReportAPI.countMobile(restockReportId, productId, quantity)
+      return item
     } catch (error) {
       throw error
     }
+
   }
   setWaiting = (status: boolean) => {
     this.waiting = status
   }
 }
+

@@ -19,7 +19,7 @@ import {
 import { filterCircle } from 'ionicons/icons'
 import { filter, get, isNull, isUndefined, map, sortBy } from 'lodash'
 import { observer } from 'mobx-react-lite'
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 
 type RestockReportProps = {
   restockReport: any
@@ -50,9 +50,7 @@ const RestockReportDetailView = observer(
         }
       }
     )
-    const filterItems = useMemo(() => {
-      return filterRestockReportItems
-    }, [status, restockReport])
+    const filterItems = filterRestockReportItems
 
     return (
       <IonPage>

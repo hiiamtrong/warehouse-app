@@ -1,7 +1,7 @@
 import { find, findIndex, get } from 'lodash'
 import { observer } from 'mobx-react-lite'
 import { useContext, useEffect } from 'react'
-import { useHistory, useRouteMatch } from 'react-router-dom'
+import { Redirect, useRouteMatch } from 'react-router-dom'
 import ItemDetailView from '../components/ItemDetailView'
 import withLoading from '../components/Loading'
 import { AppContext } from '../context'
@@ -23,7 +23,6 @@ const ItemDetail = observer(() => {
 
   const notify = useNotify()
   const match = useRouteMatch()
-  const history = useHistory()
 
   const productId = get(match, 'params.productId')
   const restockReportId = get(match, 'params.restockReportId')
@@ -50,20 +49,28 @@ const ItemDetail = observer(() => {
   }, [productId, restockReportId])
 
   async function handleCountMobile({ quantity }: { quantity: number }) {
-    const itemIndex = findIndex(restockReport?.items, (item: Item) => {
-      return item.product._id === productId
-    })
     setWaiting(true)
     await countMobile({ quantity, restockReportId, productId })
-      .then((restockReport) => {
-        setRestockReport(restockReport)
-        const nextItem: IItem = restockReport?.items[itemIndex + 1]
+      .then((item) => {
+        setItem(item)
+        const itemIndex = findIndex(restockReport?.items, (item: Item) => {
+          return item.product._id === productId
+        })
+
+        if (restockReport) {
+          restockReport.items[itemIndex] = item
+          setRestockReport(restockReport)
+        }
+
+        const nextItem: IItem | undefined = restockReport?.items[itemIndex + 1]
         if (nextItem) {
-          history.push(
-            `/restock-reports/${restockReportId}/view/${nextItem.product._id}`
+          return (
+            <Redirect
+              to={`/restock-reports/${restockReportId}/view/${nextItem.product._id}`}
+            />
           )
         } else {
-          history.push(`/restock-reports/${restockReportId}`)
+          return <Redirect to={`/restock-reports/${restockReportId}`} />
         }
       })
       .catch((err) => {

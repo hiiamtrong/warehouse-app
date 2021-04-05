@@ -1,5 +1,5 @@
 import { useToast } from '@agney/ir-toast'
-import { get } from 'lodash'
+import { get, isObject } from 'lodash'
 
 function useNotify() {
   const Toast = useToast()
@@ -11,6 +11,16 @@ function useNotify() {
       get(error, 'error.message') ||
       get(error, 'message') ||
       error
+
+    if (isObject(message)) {
+      message = JSON.stringify(message)
+    }
+
+    if (error.status === 404) {
+      message = "URL Not Found"
+    }
+
+
     const toast = Toast.create({
       message,
       color: 'danger',

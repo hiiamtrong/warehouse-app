@@ -1,6 +1,6 @@
 {
   "appId": "io.ionic.starter",
-  "appName": "warehouse-app-redux",
+  "appName": "warehouse-app",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "build",

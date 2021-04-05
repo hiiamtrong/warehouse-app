@@ -1,5 +1,5 @@
 {
-  "name": "warehouse-app-redux",
+  "name": "warehouse-app",
   "integrations": {
     "capacitor": {}
   },

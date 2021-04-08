@@ -1,12 +1,13 @@
-import { find, findIndex, get } from 'lodash'
+import { every, find, findIndex, get } from 'lodash'
 import { observer } from 'mobx-react-lite'
 import { useContext, useEffect } from 'react'
-import { Redirect, useRouteMatch } from 'react-router-dom'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 import ItemDetailView from '../components/ItemDetailView'
 import withLoading from '../components/Loading'
 import { AppContext } from '../context'
 import useNotify from '../libs/notify'
 import Item, { IItem } from '../models/item'
+import RestockReport from '../models/restock-report'
 
 const ItemDetail = observer(() => {
   const { itemStore, restockReportStore } = useContext(AppContext)
@@ -20,7 +21,7 @@ const ItemDetail = observer(() => {
   } = restockReportStore
 
   let { item, setItem } = itemStore
-
+  const history = useHistory()
   const notify = useNotify()
   const match = useRouteMatch()
 
@@ -48,6 +49,21 @@ const ItemDetail = observer(() => {
     })()
   }, [productId, restockReportId])
 
+  function isCountDone(restockReport: RestockReport | undefined) {
+    return every(restockReport?.items, (item) => {
+      return item.takenQuantity
+    })
+  }
+
+  function nextNotTakenItem(
+    restockReport: RestockReport | undefined
+  ): IItem | undefined {
+    const index = find(restockReport?.items, (item: Item) => {
+      return !item.takenQuantity
+    })
+    return index
+  }
+
   async function handleCountMobile({ quantity }: { quantity: number }) {
     setWaiting(true)
     await countMobile({ quantity, restockReportId, productId })
@@ -60,17 +76,17 @@ const ItemDetail = observer(() => {
         if (restockReport) {
           restockReport.items[itemIndex] = item
           setRestockReport(restockReport)
+          if (isCountDone(restockReport)) {
+            return notify.info('Bạn đã lấy hết sản phẩm của restock hiện tại')
+          }
         }
 
-        const nextItem: IItem | undefined = restockReport?.items[itemIndex + 1]
+        const nextItem: IItem | undefined = nextNotTakenItem(restockReport)
+
         if (nextItem) {
-          return (
-            <Redirect
-              to={`/restock-reports/${restockReportId}/view/${nextItem.product._id}`}
-            />
+          history.push(
+            `/restock-reports/${restockReportId}/view/${nextItem.product._id}`
           )
-        } else {
-          return <Redirect to={`/restock-reports/${restockReportId}`} />
         }
       })
       .catch((err) => {

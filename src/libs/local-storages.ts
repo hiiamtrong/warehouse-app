@@ -1,23 +1,26 @@
-import { isEmpty } from 'lodash'
+import { get, isEmpty } from 'lodash'
 import store from 'store'
 import Item from '../models/item'
 import RestockReport from '../models/restock-report'
-import User from '../models/user'
 import { Credentials } from '../stores/authenticationStore'
 
+
+function getCredentials() {
+  const credentials = store.get('credentials')
+  return credentials
+}
+
 const LocalStorage = {
-  getToken: () => store.get('token'),
-  setToken: (token: string) => {
-    store.set('token', token)
+  getToken: () => {
+    const credentials = getCredentials()
+    const token = get(credentials, 'token',)
+    return token
   },
+
   getUser: () => {
-    const user = store.get('user')
+    const credentials = getCredentials()
+    const user = get(credentials, 'user',)
     return user
-  },
-  setUser: (user: User) => {
-    if (!isEmpty(user)) {
-      store.set('user', user)
-    }
   },
 
   setCredentials: (credentials: Credentials) => {
@@ -26,10 +29,7 @@ const LocalStorage = {
     }
   },
 
-  getCredentials: () => {
-    const credentials = store.get('credentials')
-    return credentials
-  },
+  getCredentials,
   clearCredentials: () => {
     store.remove('credentials')
   },
@@ -54,12 +54,13 @@ const LocalStorage = {
     }
   },
 
-  getExpired: () => store.get('expired'),
-  setExpired: (expired: string) => {
-    if (expired) {
-      store.set('expired', expired)
-    }
+  getExpired: () => {
+    const credentials = getCredentials()
+    const expired = get(credentials, 'expired',)
+    return expired
   },
+
 }
 
 export default LocalStorage
+

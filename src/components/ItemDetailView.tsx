@@ -36,7 +36,7 @@ const ItemDetailView = observer(({ item, handleCountMobile }: ItemProps) => {
         item?.restockQuantity,
         `Số lượng lấy tối đa là ${item?.restockQuantity}`
       )
-      .min(0, 'Số lượng tối thiểu là 0')
+      .min(1, 'Số lượng tối thiểu là 1')
       .required('Please enter quantity'),
   })
 
@@ -79,7 +79,7 @@ const ItemDetailView = observer(({ item, handleCountMobile }: ItemProps) => {
                       {'Cần lấy'} {get(item, 'restockQuantity', '')}
                     </IonCol>
                   </IonRow>
-                  {item?.takenQuantity >= 0 && (
+                  {item?.takenQuantity && (
                     <IonRow>
                       <IonCol className='ion-text-left'></IonCol>
                       <IonCol className='ion-text-right'>

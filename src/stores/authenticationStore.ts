@@ -45,9 +45,6 @@ export class AuthenticationStore {
     this.user = user
     this.token = token
     this.expired = new Date(expired)
-    LocalStorage.setUser(user)
-    LocalStorage.setExpired(expired)
-    LocalStorage.setToken(token)
     LocalStorage.setCredentials({ user, token, expired })
   }
 

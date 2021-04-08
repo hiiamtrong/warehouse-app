@@ -17,9 +17,10 @@ import {
   IonToolbar,
 } from '@ionic/react'
 import { filterCircle } from 'ionicons/icons'
-import { filter, get, isNull, isUndefined, map, sortBy } from 'lodash'
+import { filter, get, map, sortBy } from 'lodash'
 import { observer } from 'mobx-react-lite'
 import React, { useState } from 'react'
+import IItem from '../models/item'
 
 type RestockReportProps = {
   restockReport: any
@@ -29,10 +30,16 @@ const RestockReportDetailView = observer(
   ({ restockReport, viewProductDetail }: RestockReportProps) => {
     const [status, setStatus] = useState('all')
     const filterRestockReportItems = filter(
-      sortBy(restockReport?.items, (item) => {
-        return !(item.takenQuantity === item.restockQuantity)
-      }),
-      (item) => {
+      sortBy(
+        restockReport?.items,
+        (item: IItem) => {
+          return !(item.takenQuantity === item.restockQuantity)
+        },
+        (item: IItem) => {
+          return item.takenQuantity
+        }
+      ),
+      (item: IItem) => {
         if (status === 'all') {
           return true
         }
@@ -41,12 +48,11 @@ const RestockReportDetailView = observer(
         }
         if (status === 'taken-missing') {
           return (
-            item.takenQuantity >= 0 &&
-            item.takenQuantity !== item.restockQuantity
+            item.takenQuantity && item.takenQuantity !== item.restockQuantity
           )
         }
         if (status === 'not-taken') {
-          return isUndefined(item.takenQuantity) || isNull(item.takenQuantity)
+          return !item.takenQuantity
         }
       }
     )
@@ -87,7 +93,7 @@ const RestockReportDetailView = observer(
                   color={
                     item.takenQuantity === item.restockQuantity
                       ? 'success'
-                      : item.takenQuantity >= 0
+                      : item.takenQuantity
                       ? 'warning'
                       : 'light'
                   }
@@ -113,7 +119,7 @@ const RestockReportDetailView = observer(
                           {'Cần lấy'} {item.restockQuantity}
                         </IonCol>
                       </IonRow>
-                      {item.takenQuantity >= 0 && (
+                      {item.takenQuantity && (
                         <IonRow>
                           <IonCol className='ion-text-left'></IonCol>
                           <IonCol className='ion-text-right'>
